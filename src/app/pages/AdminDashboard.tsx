@@ -1,10 +1,8 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import {
-  LayoutDashboard,
   Package,
   MessageSquare,
-  Settings,
   Plus,
   Edit,
   Trash2,
@@ -12,27 +10,19 @@ import {
   Upload,
   Eye,
   TrendingUp,
-  Users,
   Box,
   X,
-  ChevronRight
+  Settings,
+  ArrowUpRight,
+  ArrowDownRight
 } from "lucide-react";
 import { mockProducts } from "../data/mockData";
+import { Button } from "../components/ui/button";
+import { Input } from "../components/ui/input";
+import { Badge } from "../components/ui/badge";
+import { AdminSidebar } from "../components/features/AdminSidebar";
 
 type TabType = "overview" | "products" | "inquiries" | "settings";
-
-function AnimatedCounter({ value }: { value: number }) {
-  return (
-    <motion.span
-      key={value}
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="text-3xl font-bold text-white"
-    >
-      {value}
-    </motion.span>
-  );
-}
 
 export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState<TabType>("overview");
@@ -40,44 +30,16 @@ export default function AdminDashboard() {
   const [searchQuery, setSearchQuery] = useState("");
 
   const inquiries = [
-    {
-      id: "1",
-      customerName: "John Smith",
-      email: "john@example.com",
-      product: "Premium Brake Pad Set",
-      date: "2026-01-20",
-      status: "New",
-    },
-    {
-      id: "2",
-      customerName: "Sarah Johnson",
-      email: "sarah@example.com",
-      product: "Engine Oil Filter",
-      date: "2026-01-19",
-      status: "Responded",
-    },
-    {
-      id: "3",
-      customerName: "Mike Wilson",
-      email: "mike@example.com",
-      product: "LED Headlight Assembly",
-      date: "2026-01-18",
-      status: "New",
-    },
-  ];
-
-  const navItems = [
-    { id: "overview", label: "Overview", icon: LayoutDashboard },
-    { id: "products", label: "Products", icon: Package },
-    { id: "inquiries", label: "Inquiries", icon: MessageSquare, badge: inquiries.filter(i => i.status === "New").length },
-    { id: "settings", label: "Settings", icon: Settings },
+    { id: "1", customerName: "John Smith", email: "john@example.com", product: "Brembo GT Series Brakes", date: "Jan 20, 2026", status: "New" },
+    { id: "2", customerName: "Sarah Johnson", email: "sarah@example.com", product: "Garrett Turbocharger", date: "Jan 19, 2026", status: "Responded" },
+    { id: "3", customerName: "Mike Wilson", email: "mike@example.com", product: "Ohlins Coilover Kit", date: "Jan 18, 2026", status: "New" },
   ];
 
   const stats = [
-    { label: "Total Products", value: mockProducts.length, icon: Package, color: "blue", change: "+2 this week" },
-    { label: "New Inquiries", value: inquiries.filter(i => i.status === "New").length, icon: MessageSquare, color: "red", change: "Today" },
-    { label: "In Stock", value: mockProducts.filter(p => p.stockStatus === "In Stock").length, icon: Box, color: "green", change: "Products" },
-    { label: "Low Stock", value: mockProducts.filter(p => p.stockStatus === "Low Stock").length, icon: TrendingUp, color: "yellow", change: "Needs attention" },
+    { label: "Active Inventory", value: mockProducts.length, icon: Package, color: "blue", trend: "+12%", up: true },
+    { label: "Pending Inquiries", value: inquiries.filter(i => i.status === "New").length, icon: MessageSquare, color: "red", trend: "+2 today", up: true },
+    { label: "High Demand items", value: 14, icon: TrendingUp, color: "green", trend: "Stable", up: true },
+    { label: "System Health", value: "99%", icon: Settings, color: "purple", trend: "0 errors", up: true },
   ];
 
   const filteredProducts = mockProducts.filter(p =>
@@ -87,468 +49,264 @@ export default function AdminDashboard() {
   );
 
   return (
-    <div className="min-h-screen bg-[#0a0a0f] flex">
-      {/* Sidebar */}
-      <aside className="w-64 glass-dark border-r border-white/5 p-6 flex flex-col">
-        <div className="mb-8">
-          <h2 className="text-xl font-bold text-white">Admin Panel</h2>
-          <p className="text-sm text-zinc-500">AutoParts Pro</p>
-        </div>
-
-        <nav className="space-y-2 flex-1">
-          {navItems.map((item) => (
-            <motion.button
-              key={item.id}
-              onClick={() => setActiveTab(item.id as TabType)}
-              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all relative ${activeTab === item.id
-                ? "bg-red-500 text-white"
-                : "text-zinc-400 hover:bg-white/5 hover:text-white"
-                }`}
-              whileHover={{ x: 4 }}
-              whileTap={{ scale: 0.98 }}
-            >
-              <item.icon className="w-5 h-5" />
-              {item.label}
-              {item.badge && item.badge > 0 && (
-                <motion.span
-                  className={`ml-auto px-2 py-0.5 rounded-full text-xs font-semibold ${activeTab === item.id
-                    ? "bg-white text-red-500"
-                    : "bg-red-500 text-white"
-                    }`}
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                >
-                  {item.badge}
-                </motion.span>
-              )}
-              {activeTab === item.id && (
-                <motion.div
-                  className="absolute right-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-white rounded-l-full"
-                  layoutId="activeIndicator"
-                />
-              )}
-            </motion.button>
-          ))}
-        </nav>
-
-        {/* User info */}
-        <div className="pt-6 border-t border-white/10">
-          <div className="flex items-center gap-3 p-3 rounded-xl bg-white/5">
-            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-red-500 to-red-600 flex items-center justify-center text-white font-semibold">
-              A
-            </div>
-            <div>
-              <div className="text-sm font-semibold text-white">Admin User</div>
-              <div className="text-xs text-zinc-500">admin@autoparts.com</div>
-            </div>
-          </div>
-        </div>
-      </aside>
+    <div className="min-h-screen bg-[#060608] flex font-sans selection:bg-red-500/30">
+      <AdminSidebar
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
+        inquiriesCount={inquiries.filter(i => i.status === "New").length}
+      />
 
       {/* Main Content */}
-      <main className="flex-1 p-8 overflow-auto">
-        <AnimatePresence mode="wait">
-          {/* Overview Tab */}
-          {activeTab === "overview" && (
-            <motion.div
-              key="overview"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-            >
-              <h1 className="text-3xl font-bold text-white mb-8">Dashboard Overview</h1>
+      <main className="flex-1 p-10 overflow-auto">
+        <header className="flex justify-between items-center mb-12">
+          <div>
+            <h1 className="text-3xl font-black text-white tracking-tight uppercase">{activeTab}</h1>
+            <div className="h-1 w-12 bg-red-600 mt-2 rounded-full" />
+          </div>
+          <div className="flex items-center gap-4">
+            <div className="bg-white/5 border border-white/5 px-4 py-2 rounded-xl text-xs font-bold text-zinc-500 uppercase tracking-widest">
+              Server: <span className="text-green-500">Live</span>
+            </div>
+            <div className="bg-white/5 border border-white/5 px-4 py-2 rounded-xl text-xs font-bold text-zinc-500 uppercase tracking-widest">
+              Sync: <span className="text-blue-500">2m ago</span>
+            </div>
+          </div>
+        </header>
 
-              {/* Stats Cards */}
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <AnimatePresence mode="wait">
+          {activeTab === "overview" && (
+            <motion.div key="overview" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="space-y-8">
+              {/* Stats Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
                 {stats.map((stat, idx) => (
-                  <motion.div
-                    key={stat.label}
-                    className="glass-card rounded-2xl p-6 hover-lift cursor-pointer"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: idx * 0.1 }}
-                  >
-                    <div className="flex items-center justify-between mb-3">
-                      <span className="text-sm text-zinc-400">{stat.label}</span>
-                      <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${stat.color === 'blue' ? 'bg-blue-500/20' :
-                        stat.color === 'red' ? 'bg-red-500/20' :
-                          stat.color === 'green' ? 'bg-green-500/20' : 'bg-yellow-500/20'
+                  <div key={idx} className="glass-card rounded-3xl p-6 border-white/5 relative overflow-hidden group">
+                    <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:scale-125 transition-transform duration-500">
+                      <stat.icon className="w-16 h-16" />
+                    </div>
+                    <div className="flex items-center gap-4 mb-4">
+                      <div className={`p-3 rounded-2xl bg-white/5 ${stat.color === 'blue' ? 'text-blue-500' :
+                        stat.color === 'red' ? 'text-red-500' :
+                          stat.color === 'green' ? 'text-green-500' : 'text-purple-500'
                         }`}>
-                        <stat.icon className={`w-5 h-5 ${stat.color === 'blue' ? 'text-blue-400' :
-                          stat.color === 'red' ? 'text-red-400' :
-                            stat.color === 'green' ? 'text-green-400' : 'text-yellow-400'
-                          }`} />
+                        <stat.icon className="w-5 h-5" />
+                      </div>
+                      <span className="text-[10px] font-black uppercase tracking-widest text-zinc-500">{stat.label}</span>
+                    </div>
+                    <div className="flex items-end justify-between">
+                      <div className="text-3xl font-black text-white">{stat.value}</div>
+                      <div className={`flex items-center gap-1 text-[10px] font-bold ${stat.up ? 'text-green-500' : 'text-red-500'}`}>
+                        {stat.up ? <ArrowUpRight className="w-3 h-3" /> : <ArrowDownRight className="w-3 h-3" />}
+                        {stat.trend}
                       </div>
                     </div>
-                    <AnimatedCounter value={stat.value} />
-                    <div className={`text-xs mt-1 ${stat.color === 'green' ? 'text-green-400' :
-                      stat.color === 'red' ? 'text-red-400' :
-                        stat.color === 'yellow' ? 'text-yellow-400' : 'text-zinc-500'
-                      }`}>
-                      {stat.change}
-                    </div>
-                  </motion.div>
+                  </div>
                 ))}
               </div>
 
-              {/* Recent Inquiries */}
-              <div className="glass-card rounded-2xl p-6">
-                <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-xl font-bold text-white">Recent Inquiries</h2>
-                  <button
-                    onClick={() => setActiveTab("inquiries")}
-                    className="text-sm text-red-400 hover:text-red-300 flex items-center gap-1"
-                  >
-                    View All
-                    <ChevronRight className="w-4 h-4" />
-                  </button>
-                </div>
-                <div className="space-y-3">
-                  {inquiries.map((inquiry, idx) => (
-                    <motion.div
-                      key={inquiry.id}
-                      className="flex items-center justify-between p-4 rounded-xl bg-white/5 hover:bg-white/10 transition-colors"
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: idx * 0.1 }}
-                    >
-                      <div className="flex items-center gap-4">
-                        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-zinc-700 to-zinc-800 flex items-center justify-center text-white font-semibold">
-                          {inquiry.customerName.charAt(0)}
+              {/* Quick Products & Inquiries View */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div className="glass-card rounded-[2.5rem] p-8">
+                  <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
+                    <MessageSquare className="w-5 h-5 text-red-500" />
+                    Incoming Requests
+                  </h3>
+                  <div className="space-y-4">
+                    {inquiries.map((inquiry) => (
+                      <div key={inquiry.id} className="p-5 bg-white/5 rounded-2xl border border-white/5 flex items-center justify-between group hover:bg-white/[0.08] transition-all">
+                        <div className="flex items-center gap-4">
+                          <div className="w-12 h-12 bg-zinc-800 rounded-xl flex items-center justify-center font-bold text-white">
+                            {inquiry.customerName.charAt(0)}
+                          </div>
+                          <div>
+                            <div className="font-bold text-white group-hover:text-red-500 transition-colors">{inquiry.customerName}</div>
+                            <div className="text-xs text-zinc-500">{inquiry.product}</div>
+                          </div>
                         </div>
-                        <div>
-                          <div className="font-semibold text-white">{inquiry.customerName}</div>
-                          <div className="text-sm text-zinc-500">{inquiry.product}</div>
-                        </div>
-                      </div>
-                      <div className="text-right">
-                        <div className="text-sm text-zinc-500 mb-1">{inquiry.date}</div>
-                        <span
-                          className={`text-xs px-2.5 py-1 rounded-full font-semibold ${inquiry.status === "New"
-                            ? "bg-red-500/20 text-red-400 border border-red-500/30"
-                            : "bg-green-500/20 text-green-400 border border-green-500/30"
-                            }`}
-                        >
+                        <Badge variant={inquiry.status === "New" ? "auto-danger" : "auto-success"}>
                           {inquiry.status}
-                        </span>
+                        </Badge>
                       </div>
-                    </motion.div>
-                  ))}
+                    ))}
+                  </div>
+                </div>
+
+                <div className="glass-card rounded-[2.5rem] p-8">
+                  <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
+                    <Box className="w-5 h-5 text-blue-500" />
+                    Stock Alerts
+                  </h3>
+                  <div className="space-y-4">
+                    {mockProducts.slice(0, 3).map((product) => (
+                      <div key={product.id} className="p-5 bg-white/5 rounded-2xl border border-white/5 flex items-center justify-between">
+                        <div className="flex items-center gap-4">
+                          <img src={product.image} className="w-12 h-12 rounded-xl object-cover" />
+                          <div>
+                            <div className="font-bold text-white">{product.name}</div>
+                            <div className="text-xs font-mono text-zinc-500">{product.partNumber}</div>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <div className="text-sm font-bold text-white">${product.price}</div>
+                          <div className="text-[10px] text-zinc-500 uppercase font-black">Serial Check Pass</div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
             </motion.div>
           )}
 
-          {/* Products Tab */}
           {activeTab === "products" && (
-            <motion.div
-              key="products"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-            >
-              <div className="flex justify-between items-center mb-8">
-                <h1 className="text-3xl font-bold text-white">Product Management</h1>
-                <motion.button
-                  onClick={() => setShowAddProduct(true)}
-                  className="btn-primary flex items-center gap-2"
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                >
-                  <Plus className="w-5 h-5" />
-                  Add Product
-                </motion.button>
-              </div>
-
-              {/* Search */}
-              <div className="mb-6 relative">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-zinc-500" />
-                <input
-                  type="text"
-                  placeholder="Search products by name or part number..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-12 pr-4 py-4 glass-card rounded-xl text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-red-500/50"
-                />
-              </div>
-
-              {/* Product Table */}
-              <div className="glass-card rounded-2xl overflow-hidden">
-                <div className="overflow-x-auto">
-                  <table className="w-full">
-                    <thead>
-                      <tr className="border-b border-white/10">
-                        <th className="text-left px-6 py-4 text-sm font-semibold text-zinc-400">Product</th>
-                        <th className="text-left px-6 py-4 text-sm font-semibold text-zinc-400">Category</th>
-                        <th className="text-left px-6 py-4 text-sm font-semibold text-zinc-400">Price</th>
-                        <th className="text-left px-6 py-4 text-sm font-semibold text-zinc-400">Stock</th>
-                        <th className="text-left px-6 py-4 text-sm font-semibold text-zinc-400">3D Model</th>
-                        <th className="text-left px-6 py-4 text-sm font-semibold text-zinc-400">Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {filteredProducts.map((product, idx) => (
-                        <motion.tr
-                          key={product.id}
-                          className="border-b border-white/5 hover:bg-white/5 transition-colors"
-                          initial={{ opacity: 0 }}
-                          animate={{ opacity: 1 }}
-                          transition={{ delay: idx * 0.05 }}
-                        >
-                          <td className="px-6 py-4">
-                            <div className="flex items-center gap-3">
-                              <img
-                                src={product.image}
-                                alt={product.name}
-                                className="w-12 h-12 object-cover rounded-lg"
-                              />
-                              <div>
-                                <div className="font-semibold text-white">{product.name}</div>
-                                <div className="text-xs text-zinc-500 font-mono">{product.partNumber}</div>
-                              </div>
-                            </div>
-                          </td>
-                          <td className="px-6 py-4 text-sm text-zinc-300">{product.category}</td>
-                          <td className="px-6 py-4 text-sm font-semibold text-white">${product.price.toFixed(2)}</td>
-                          <td className="px-6 py-4">
-                            <span
-                              className={`text-xs px-2.5 py-1 rounded-full font-semibold ${product.stockStatus === "In Stock"
-                                ? "bg-green-500/20 text-green-400"
-                                : product.stockStatus === "Low Stock"
-                                  ? "bg-yellow-500/20 text-yellow-400"
-                                  : "bg-red-500/20 text-red-400"
-                                }`}
-                            >
-                              {product.stockStatus}
-                            </span>
-                          </td>
-                          <td className="px-6 py-4">
-                            {product.has3D ? (
-                              <span className="text-xs text-green-400 font-semibold flex items-center gap-1">
-                                <Box className="w-3 h-3" />
-                                Available
-                              </span>
-                            ) : (
-                              <span className="text-xs text-zinc-500">Not uploaded</span>
-                            )}
-                          </td>
-                          <td className="px-6 py-4">
-                            <div className="flex items-center gap-1">
-                              <motion.button
-                                className="p-2 rounded-lg hover:bg-white/10 transition-colors"
-                                whileHover={{ scale: 1.1 }}
-                              >
-                                <Eye className="w-4 h-4 text-blue-400" />
-                              </motion.button>
-                              <motion.button
-                                className="p-2 rounded-lg hover:bg-white/10 transition-colors"
-                                whileHover={{ scale: 1.1 }}
-                              >
-                                <Edit className="w-4 h-4 text-zinc-400" />
-                              </motion.button>
-                              <motion.button
-                                className="p-2 rounded-lg hover:bg-white/10 transition-colors"
-                                whileHover={{ scale: 1.1 }}
-                              >
-                                <Trash2 className="w-4 h-4 text-red-400" />
-                              </motion.button>
-                            </div>
-                          </td>
-                        </motion.tr>
-                      ))}
-                    </tbody>
-                  </table>
+            <motion.div key="products" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="space-y-6">
+              <div className="flex flex-col md:flex-row gap-4 mb-8">
+                <div className="relative flex-1">
+                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-zinc-600" />
+                  <Input
+                    placeholder="Filter by part name, SKU, or category..."
+                    className="pl-12 h-14 rounded-2xl"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                  />
                 </div>
+                <Button variant="auto-primary" onClick={() => setShowAddProduct(true)} className="h-14 px-8 rounded-2xl">
+                  <Plus className="w-5 h-5 mr-2" />
+                  Add Part
+                </Button>
               </div>
 
-              {/* Add Product Modal */}
-              <AnimatePresence>
-                {showAddProduct && (
-                  <motion.div
-                    className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-50"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    onClick={() => setShowAddProduct(false)}
-                  >
-                    <motion.div
-                      className="glass-card rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-8"
-                      initial={{ scale: 0.9, y: 20 }}
-                      animate={{ scale: 1, y: 0 }}
-                      exit={{ scale: 0.9, y: 20 }}
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      <div className="flex items-center justify-between mb-6">
-                        <h2 className="text-2xl font-bold text-white">Add New Product</h2>
-                        <button
-                          onClick={() => setShowAddProduct(false)}
-                          className="p-2 rounded-lg hover:bg-white/10 transition-colors"
-                        >
-                          <X className="w-5 h-5 text-zinc-400" />
-                        </button>
-                      </div>
-
-                      <div className="space-y-4">
-                        <div>
-                          <label className="block text-sm font-semibold text-zinc-300 mb-2">Product Name</label>
-                          <input
-                            type="text"
-                            className="w-full px-4 py-3 glass-card rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-red-500/50"
-                            placeholder="Enter product name"
-                          />
-                        </div>
-
-                        <div className="grid grid-cols-2 gap-4">
-                          <div>
-                            <label className="block text-sm font-semibold text-zinc-300 mb-2">Category</label>
-                            <select className="w-full px-4 py-3 glass-card rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-red-500/50 cursor-pointer">
-                              <option className="bg-zinc-900">Engine</option>
-                              <option className="bg-zinc-900">Brakes</option>
-                              <option className="bg-zinc-900">Suspension</option>
-                              <option className="bg-zinc-900">Electrical</option>
-                            </select>
-                          </div>
-
-                          <div>
-                            <label className="block text-sm font-semibold text-zinc-300 mb-2">Price</label>
-                            <input
-                              type="number"
-                              className="w-full px-4 py-3 glass-card rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-red-500/50"
-                              placeholder="0.00"
-                              step="0.01"
-                            />
-                          </div>
-                        </div>
-
-                        <div>
-                          <label className="block text-sm font-semibold text-zinc-300 mb-2">Description</label>
-                          <textarea
-                            className="w-full px-4 py-3 glass-card rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-red-500/50 resize-none"
-                            rows={4}
-                            placeholder="Enter product description"
-                          />
-                        </div>
-
-                        <div>
-                          <label className="block text-sm font-semibold text-zinc-300 mb-2">Upload Image</label>
-                          <div className="border-2 border-dashed border-white/20 rounded-xl p-8 text-center hover:border-red-500/50 transition-colors cursor-pointer">
-                            <Upload className="w-12 h-12 text-zinc-500 mx-auto mb-2" />
-                            <p className="text-sm text-zinc-400">Click to upload or drag and drop</p>
-                          </div>
-                        </div>
-
-                        <div>
-                          <label className="block text-sm font-semibold text-zinc-300 mb-2">3D Model Link</label>
-                          <input
-                            type="url"
-                            className="w-full px-4 py-3 glass-card rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-red-500/50"
-                            placeholder="https://example.com/3d-model"
-                          />
-                        </div>
-                      </div>
-
-                      <div className="flex gap-4 mt-8">
-                        <button
-                          onClick={() => setShowAddProduct(false)}
-                          className="flex-1 btn-secondary"
-                        >
-                          Cancel
-                        </button>
-                        <button className="flex-1 btn-primary">
-                          Add Product
-                        </button>
-                      </div>
-                    </motion.div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </motion.div>
-          )}
-
-          {/* Inquiries Tab */}
-          {activeTab === "inquiries" && (
-            <motion.div
-              key="inquiries"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-            >
-              <h1 className="text-3xl font-bold text-white mb-8">Customer Inquiries</h1>
-
-              <div className="glass-card rounded-2xl overflow-hidden">
-                <div className="overflow-x-auto">
-                  <table className="w-full">
-                    <thead>
-                      <tr className="border-b border-white/10">
-                        <th className="text-left px-6 py-4 text-sm font-semibold text-zinc-400">Customer</th>
-                        <th className="text-left px-6 py-4 text-sm font-semibold text-zinc-400">Email</th>
-                        <th className="text-left px-6 py-4 text-sm font-semibold text-zinc-400">Product</th>
-                        <th className="text-left px-6 py-4 text-sm font-semibold text-zinc-400">Date</th>
-                        <th className="text-left px-6 py-4 text-sm font-semibold text-zinc-400">Status</th>
-                        <th className="text-left px-6 py-4 text-sm font-semibold text-zinc-400">Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {inquiries.map((inquiry, idx) => (
-                        <motion.tr
-                          key={inquiry.id}
-                          className="border-b border-white/5 hover:bg-white/5 transition-colors"
-                          initial={{ opacity: 0 }}
-                          animate={{ opacity: 1 }}
-                          transition={{ delay: idx * 0.1 }}
-                        >
-                          <td className="px-6 py-4">
-                            <div className="flex items-center gap-3">
-                              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-zinc-700 to-zinc-800 flex items-center justify-center text-white font-semibold">
-                                {inquiry.customerName.charAt(0)}
-                              </div>
-                              <span className="font-semibold text-white">{inquiry.customerName}</span>
+              <div className="glass-card rounded-[2rem] overflow-hidden border-white/5">
+                <table className="w-full text-left">
+                  <thead className="bg-white/5">
+                    <tr>
+                      <th className="p-6 text-[10px] font-black uppercase tracking-widest text-zinc-500">Component</th>
+                      <th className="p-6 text-[10px] font-black uppercase tracking-widest text-zinc-500">Category</th>
+                      <th className="p-6 text-[10px] font-black uppercase tracking-widest text-zinc-500">Asset</th>
+                      <th className="p-6 text-[10px] font-black uppercase tracking-widest text-zinc-500">Status</th>
+                      <th className="p-6 text-[10px] font-black uppercase tracking-widest text-zinc-500">Valuation</th>
+                      <th className="p-6 text-[10px] font-black uppercase tracking-widest text-zinc-500 text-right">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-white/5">
+                    {filteredProducts.map((product) => (
+                      <tr key={product.id} className="hover:bg-white/[0.03] transition-colors group">
+                        <td className="p-6">
+                          <div className="flex items-center gap-4">
+                            <img src={product.image} className="w-14 h-14 rounded-2xl object-cover shadow-2xl" />
+                            <div>
+                              <div className="font-bold text-white group-hover:text-red-500 transition-colors uppercase tracking-tight">{product.name}</div>
+                              <div className="text-[10px] font-mono text-zinc-500">{product.partNumber}</div>
                             </div>
-                          </td>
-                          <td className="px-6 py-4 text-sm text-zinc-400">{inquiry.email}</td>
-                          <td className="px-6 py-4 text-sm text-zinc-300">{inquiry.product}</td>
-                          <td className="px-6 py-4 text-sm text-zinc-400">{inquiry.date}</td>
-                          <td className="px-6 py-4">
-                            <span
-                              className={`text-xs px-2.5 py-1 rounded-full font-semibold ${inquiry.status === "New"
-                                ? "bg-red-500/20 text-red-400"
-                                : "bg-green-500/20 text-green-400"
-                                }`}
-                            >
-                              {inquiry.status}
-                            </span>
-                          </td>
-                          <td className="px-6 py-4">
-                            <button className="text-sm text-blue-400 hover:text-blue-300 font-semibold">
-                              View Details
-                            </button>
-                          </td>
-                        </motion.tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </motion.div>
-          )}
-
-          {/* Settings Tab */}
-          {activeTab === "settings" && (
-            <motion.div
-              key="settings"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-            >
-              <h1 className="text-3xl font-bold text-white mb-8">Settings</h1>
-
-              <div className="glass-card rounded-2xl p-8">
-                <p className="text-zinc-400">Settings configuration would be displayed here.</p>
+                          </div>
+                        </td>
+                        <td className="p-6 font-bold text-sm text-zinc-400 capitalize">{product.category}</td>
+                        <td className="p-6">
+                          {product.has3D ? (
+                            <div className="inline-flex items-center gap-2 text-[10px] font-black uppercase text-blue-500 tracking-widest">
+                              <Box className="w-3 h-3" />
+                              3D Mesh Active
+                            </div>
+                          ) : (
+                            <span className="text-[10px] text-zinc-600 uppercase font-bold">2D Static Only</span>
+                          )}
+                        </td>
+                        <td className="p-6">
+                          <Badge variant={
+                            product.stockStatus === "In Stock" ? "auto-success" :
+                              product.stockStatus === "Low Stock" ? "auto-warning" : "auto-danger"
+                          }>
+                            {product.stockStatus}
+                          </Badge>
+                        </td>
+                        <td className="p-6 font-mono font-bold text-white">${product.price.toLocaleString()}</td>
+                        <td className="p-6 text-right">
+                          <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <button className="p-2 bg-white/5 hover:bg-white/10 text-white rounded-lg transition-all"><Edit className="w-4 h-4" /></button>
+                            <button className="p-2 bg-white/5 hover:bg-red-500/20 text-red-500 rounded-lg transition-all"><Trash2 className="w-4 h-4" /></button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
             </motion.div>
           )}
         </AnimatePresence>
       </main>
+
+      {/* Add Product Modal */}
+      <AnimatePresence>
+        {showAddProduct && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-6">
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="absolute inset-0 bg-black/90 backdrop-blur-xl" onClick={() => setShowAddProduct(false)} />
+            <motion.div
+              initial={{ scale: 0.9, y: 20 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.9, y: 20 }}
+              className="relative w-full max-w-2xl bg-[#0d0d12] rounded-[3rem] p-10 border border-white/5 shadow-[0_0_100px_rgba(239,68,68,0.1)]"
+            >
+              <div className="flex items-center justify-between mb-10">
+                <div>
+                  <h2 className="text-3xl font-black text-white uppercase tracking-tighter">New Inventory Item</h2>
+                  <p className="text-zinc-500 font-bold uppercase tracking-widest text-[10px] mt-1">Industrial parts intake system</p>
+                </div>
+                <button onClick={() => setShowAddProduct(false)} className="w-12 h-12 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center text-white transition-all">
+                  <X className="w-6 h-6" />
+                </button>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div className="space-y-6">
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black uppercase text-zinc-500 tracking-widest ml-1">Component Name</label>
+                    <Input placeholder="e.g. Forged Pistons V8" className="h-14 rounded-2xl" />
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-black uppercase text-zinc-500 tracking-widest ml-1">Price ($)</label>
+                      <Input type="number" placeholder="00.00" className="h-14 rounded-2xl" />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-black uppercase text-zinc-500 tracking-widest ml-1">Serial SKU</label>
+                      <Input placeholder="AP-XXXX" className="h-14 rounded-2xl" />
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black uppercase text-zinc-500 tracking-widest ml-1">Technical Spec</label>
+                    <textarea
+                      className="w-full bg-white/5 border border-white/10 rounded-3xl p-6 text-white text-sm focus:outline-none focus:ring-2 focus:ring-red-500/50 resize-none h-40"
+                      placeholder="Enter part details, material composition, and technical properties..."
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-6">
+                  <div className="border-2 border-dashed border-white/5 rounded-[2.5rem] p-10 text-center group hover:border-red-500/30 transition-all bg-white/[0.02] cursor-pointer">
+                    <div className="w-20 h-20 bg-white/5 rounded-3xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform">
+                      <Upload className="w-8 h-8 text-zinc-500 group-hover:text-red-500 transition-colors" />
+                    </div>
+                    <div className="font-bold text-white mb-1">Upload Render</div>
+                    <p className="text-[10px] text-zinc-500 uppercase tracking-widest">DRAG ASSETS HERE</p>
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black uppercase text-zinc-500 tracking-widest ml-1">3D Mesh Link (.obj / .gltf)</label>
+                    <Input placeholder="https://storage.cloud.com/mesh/model.gltf" className="h-14 rounded-2xl" />
+                  </div>
+
+                  <div className="pt-6">
+                    <Button variant="auto-primary" className="w-full h-16 rounded-2xl font-black uppercase tracking-widest text-sm shadow-[0_20px_50px_rgba(239,68,68,0.2)]">
+                      Finalize Intake
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
+

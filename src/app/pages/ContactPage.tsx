@@ -8,10 +8,11 @@ import {
   Clock,
   Send,
   CheckCircle,
-  User,
   Car,
   MessageSquare
 } from "lucide-react";
+import { Input } from "../components/ui/input";
+import { Button } from "../components/ui/button";
 
 export default function ContactPage() {
   const [formData, setFormData] = useState({
@@ -25,7 +26,6 @@ export default function ContactPage() {
   });
 
   const [submitted, setSubmitted] = useState(false);
-  const [focusedField, setFocusedField] = useState<string | null>(null);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -52,357 +52,210 @@ export default function ContactPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0a0a0f]">
-      {/* Hero Section */}
-      <div className="gradient-mesh py-20 relative overflow-hidden">
-        {/* Decorative elements */}
-        <motion.div
-          className="absolute top-20 right-20 w-40 h-40 border border-red-500/10 rounded-full"
-          animate={{ rotate: 360 }}
-          transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
-        />
-        <motion.div
-          className="absolute bottom-10 left-20 w-32 h-32 border border-blue-500/10 rounded-xl"
-          animate={{ y: [0, -20, 0], rotate: [0, 5, 0] }}
-          transition={{ duration: 5, repeat: Infinity }}
-        />
-
-        <div className="container mx-auto px-4 relative z-10">
-          <motion.div
-            className="text-center max-w-2xl mx-auto"
-            initial={{ opacity: 0, y: 30 }}
+    <div className="min-h-screen bg-[#0a0a0f] pt-24 pb-20">
+      <div className="container mx-auto px-4">
+        <div className="text-center max-w-3xl mx-auto mb-16">
+          <motion.h1
+            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
+            className="text-5xl md:text-7xl font-bold text-white mb-6"
           >
-            <h1 className="text-4xl md:text-6xl font-bold text-white mb-4">
-              Get in <span className="text-gradient-red">Touch</span>
-            </h1>
-            <p className="text-xl text-zinc-400">
-              Have questions about our parts or need help with compatibility?
-              Our expert team is here to assist you.
-            </p>
-          </motion.div>
+            Get in <span className="text-gradient-red">Touch</span>
+          </motion.h1>
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className="text-xl text-zinc-500 leading-relaxed"
+          >
+            Have technical questions about compatibility or parts? Our expert automotive engineers are ready to assist you.
+          </motion.p>
         </div>
-      </div>
 
-      <div className="container mx-auto px-4 py-12">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Contact Form */}
-          <motion.div
-            className="lg:col-span-2"
-            initial={{ opacity: 0, x: -30 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.2 }}
-          >
-            <div className="glass-card rounded-2xl p-8">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="w-10 h-10 rounded-xl bg-red-500/20 flex items-center justify-center">
-                  <MessageSquare className="w-5 h-5 text-red-400" />
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+          {/* Contact Information */}
+          <div className="space-y-6">
+            <h2 className="text-2xl font-bold text-white mb-8">Contact Info</h2>
+            {[
+              { icon: Phone, label: "Customer Support", value: "+1 (555) 123-4567", color: "red" },
+              { icon: Mail, label: "General Inquiries", value: "info@autopartspro.com", color: "blue" },
+              { icon: MapPin, label: "Showroom Location", value: "123 Detroit Auto St, MI 48201", color: "green" },
+              { icon: Clock, label: "Business Hours", value: "Mon-Fri: 8AM - 6PM", color: "purple" },
+            ].map((item, idx) => (
+              <motion.div
+                key={idx}
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: idx * 0.1 }}
+                className="glass-card rounded-2xl p-6 flex items-center gap-6 border-white/5 hover:border-white/10 transition-colors group"
+              >
+                <div className={`w-14 h-14 rounded-xl flex items-center justify-center bg-white/5 group-hover:scale-110 transition-transform ${item.color === 'red' ? 'text-red-500 shadow-[0_0_15px_rgba(239,68,68,0.1)]' :
+                  item.color === 'blue' ? 'text-blue-500 shadow-[0_0_15px_rgba(59,130,246,0.1)]' :
+                    item.color === 'green' ? 'text-green-500 shadow-[0_0_15px_rgba(34,197,94,0.1)]' : 'text-purple-500 shadow-[0_0_15px_rgba(168,85,247,0.1)]'
+                  }`}>
+                  <item.icon className="w-6 h-6" />
                 </div>
-                <h2 className="text-2xl font-bold text-white">Send us a Message</h2>
+                <div>
+                  <div className="text-xs font-bold uppercase tracking-widest text-zinc-500 mb-1">{item.label}</div>
+                  <div className="text-white font-semibold">{item.value}</div>
+                </div>
+              </motion.div>
+            ))}
+
+            {/* WhatsApp Integration */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="bg-green-600/10 border border-green-500/20 rounded-3xl p-8 mt-12 overflow-hidden relative group"
+            >
+              <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-150 transition-transform duration-700">
+                <MessageCircle className="w-32 h-32" />
+              </div>
+              <h3 className="text-2xl font-bold text-green-500 mb-4 flex items-center gap-3">
+                <MessageCircle className="w-6 h-6" />
+                Live WhatsApp
+              </h3>
+              <p className="text-green-500/80 text-sm mb-6">Need a quote now? Send us pictures of your old part for instant identification.</p>
+              <Button className="w-full bg-green-600 hover:bg-green-500 text-white border-0 h-14 text-lg">
+                Message Us
+              </Button>
+            </motion.div>
+          </div>
+
+          {/* Form Section */}
+          <div className="lg:col-span-2">
+            <div className="glass-card rounded-[2.5rem] p-8 md:p-12 relative overflow-hidden">
+              <div className="absolute top-0 right-0 p-12 opacity-5 pointer-events-none">
+                <Send className="w-64 h-64" />
               </div>
 
-              <AnimatePresence>
-                {submitted && (
-                  <motion.div
-                    initial={{ opacity: 0, y: -10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
-                    className="mb-6 bg-green-500/20 border border-green-500/30 rounded-xl p-4 flex items-center gap-3"
-                  >
-                    <CheckCircle className="w-6 h-6 text-green-400" />
-                    <div>
-                      <p className="font-semibold text-green-400">Thank you for your inquiry!</p>
-                      <p className="text-sm text-green-400/70">We'll get back to you within 24 hours.</p>
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-
-              <form onSubmit={handleSubmit} className="space-y-6">
-                {/* Personal Info */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="relative">
-                    <label
-                      htmlFor="name"
-                      className={`absolute left-4 transition-all duration-200 pointer-events-none ${focusedField === 'name' || formData.name
-                          ? 'top-2 text-xs text-red-400'
-                          : 'top-4 text-sm text-zinc-500'
-                        }`}
-                    >
-                      Full Name *
-                    </label>
-                    <div className="absolute left-4 top-4 text-zinc-500">
-                      <User className={`w-4 h-4 transition-opacity ${focusedField === 'name' || formData.name ? 'opacity-0' : 'opacity-0'}`} />
-                    </div>
-                    <input
-                      type="text"
-                      id="name"
-                      name="name"
-                      value={formData.name}
-                      onChange={handleChange}
-                      onFocus={() => setFocusedField('name')}
-                      onBlur={() => setFocusedField(null)}
-                      required
-                      className="w-full px-4 pt-6 pb-3 glass-card rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-red-500/50 transition-all"
-                    />
+              <div className="relative z-10">
+                <div className="flex items-center gap-4 mb-10">
+                  <div className="w-12 h-12 bg-red-500/20 rounded-2xl flex items-center justify-center">
+                    <MessageSquare className="w-6 h-6 text-red-500" />
                   </div>
-
-                  <div className="relative">
-                    <label
-                      htmlFor="email"
-                      className={`absolute left-4 transition-all duration-200 pointer-events-none ${focusedField === 'email' || formData.email
-                          ? 'top-2 text-xs text-red-400'
-                          : 'top-4 text-sm text-zinc-500'
-                        }`}
-                    >
-                      Email Address *
-                    </label>
-                    <input
-                      type="email"
-                      id="email"
-                      name="email"
-                      value={formData.email}
-                      onChange={handleChange}
-                      onFocus={() => setFocusedField('email')}
-                      onBlur={() => setFocusedField(null)}
-                      required
-                      className="w-full px-4 pt-6 pb-3 glass-card rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-red-500/50 transition-all"
-                    />
+                  <div>
+                    <h2 className="text-3xl font-bold text-white">Send Message</h2>
+                    <p className="text-zinc-500">We usually respond in under 2 hours</p>
                   </div>
                 </div>
 
-                <div className="relative">
-                  <label
-                    htmlFor="phone"
-                    className={`absolute left-4 transition-all duration-200 pointer-events-none ${focusedField === 'phone' || formData.phone
-                        ? 'top-2 text-xs text-red-400'
-                        : 'top-4 text-sm text-zinc-500'
-                      }`}
-                  >
-                    Phone Number *
-                  </label>
-                  <input
-                    type="tel"
-                    id="phone"
-                    name="phone"
-                    value={formData.phone}
-                    onChange={handleChange}
-                    onFocus={() => setFocusedField('phone')}
-                    onBlur={() => setFocusedField(null)}
-                    required
-                    className="w-full px-4 pt-6 pb-3 glass-card rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-red-500/50 transition-all"
-                  />
-                </div>
+                <AnimatePresence>
+                  {submitted && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: 'auto' }}
+                      exit={{ opacity: 0, height: 0 }}
+                      className="mb-8"
+                    >
+                      <div className="bg-green-500/10 border border-green-500/20 rounded-2xl p-6 flex items-center gap-4">
+                        <CheckCircle className="w-8 h-8 text-green-500" />
+                        <div>
+                          <div className="font-bold text-white text-lg">Message Sent Successully!</div>
+                          <p className="text-zinc-500 text-sm">One of our specialists will touch base with you shortly.</p>
+                        </div>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
 
-                {/* Vehicle Details */}
-                <div className="border-t border-white/10 pt-6">
-                  <div className="flex items-center gap-3 mb-4">
-                    <Car className="w-5 h-5 text-blue-400" />
-                    <h3 className="font-semibold text-white">Vehicle Details (Optional)</h3>
-                  </div>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div className="relative">
-                      <label
-                        htmlFor="vehicleMake"
-                        className={`absolute left-4 transition-all duration-200 pointer-events-none ${focusedField === 'vehicleMake' || formData.vehicleMake
-                            ? 'top-2 text-xs text-blue-400'
-                            : 'top-4 text-sm text-zinc-500'
-                          }`}
-                      >
-                        Make
-                      </label>
-                      <input
-                        type="text"
-                        id="vehicleMake"
-                        name="vehicleMake"
-                        value={formData.vehicleMake}
+                <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-6">
+                    <div className="space-y-2">
+                      <label className="text-sm font-bold text-zinc-500 uppercase ml-1">Full Name</label>
+                      <Input
+                        name="name"
+                        value={formData.name}
                         onChange={handleChange}
-                        onFocus={() => setFocusedField('vehicleMake')}
-                        onBlur={() => setFocusedField(null)}
-                        className="w-full px-4 pt-6 pb-3 glass-card rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all"
+                        placeholder="John Doe"
+                        required
+                        className="h-14"
                       />
                     </div>
+                    <div className="space-y-2">
+                      <label className="text-sm font-bold text-zinc-500 uppercase ml-1">Email Address</label>
+                      <Input
+                        name="email"
+                        type="email"
+                        value={formData.email}
+                        onChange={handleChange}
+                        placeholder="john@example.com"
+                        required
+                        className="h-14"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-sm font-bold text-zinc-500 uppercase ml-1">Phone Number</label>
+                      <Input
+                        name="phone"
+                        type="tel"
+                        value={formData.phone}
+                        onChange={handleChange}
+                        placeholder="+1 (555) 000-0000"
+                        required
+                        className="h-14"
+                      />
+                    </div>
+                  </div>
 
-                    <div className="relative">
-                      <label
-                        htmlFor="vehicleModel"
-                        className={`absolute left-4 transition-all duration-200 pointer-events-none ${focusedField === 'vehicleModel' || formData.vehicleModel
-                            ? 'top-2 text-xs text-blue-400'
-                            : 'top-4 text-sm text-zinc-500'
-                          }`}
-                      >
-                        Model
-                      </label>
-                      <input
-                        type="text"
-                        id="vehicleModel"
+                  <div className="space-y-6">
+                    <div className="p-6 bg-white/5 rounded-3xl border border-white/5 space-y-4">
+                      <div className="flex items-center gap-2 text-blue-500 font-bold text-sm uppercase">
+                        <Car className="w-4 h-4" />
+                        Vehicle Specs
+                      </div>
+                      <div className="grid grid-cols-2 gap-4">
+                        <Input
+                          name="vehicleMake"
+                          value={formData.vehicleMake}
+                          onChange={handleChange}
+                          placeholder="Make"
+                          className="h-12"
+                        />
+                        <Input
+                          name="vehicleYear"
+                          value={formData.vehicleYear}
+                          onChange={handleChange}
+                          placeholder="Year"
+                          className="h-12"
+                        />
+                      </div>
+                      <Input
                         name="vehicleModel"
                         value={formData.vehicleModel}
                         onChange={handleChange}
-                        onFocus={() => setFocusedField('vehicleModel')}
-                        onBlur={() => setFocusedField(null)}
-                        className="w-full px-4 pt-6 pb-3 glass-card rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all"
+                        placeholder="Model / Chassis"
+                        className="h-12"
                       />
                     </div>
 
-                    <div className="relative">
-                      <label
-                        htmlFor="vehicleYear"
-                        className={`absolute left-4 transition-all duration-200 pointer-events-none ${focusedField === 'vehicleYear' || formData.vehicleYear
-                            ? 'top-2 text-xs text-blue-400'
-                            : 'top-4 text-sm text-zinc-500'
-                          }`}
-                      >
-                        Year
-                      </label>
-                      <input
-                        type="text"
-                        id="vehicleYear"
-                        name="vehicleYear"
-                        value={formData.vehicleYear}
+                    <div className="space-y-2">
+                      <label className="text-sm font-bold text-zinc-500 uppercase ml-1">Your Inquiry</label>
+                      <textarea
+                        name="message"
+                        value={formData.message}
                         onChange={handleChange}
-                        onFocus={() => setFocusedField('vehicleYear')}
-                        onBlur={() => setFocusedField(null)}
-                        className="w-full px-4 pt-6 pb-3 glass-card rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all"
+                        placeholder="Tell us about the part you need..."
+                        required
+                        rows={4}
+                        className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-white placeholder-zinc-700 focus:outline-none focus:ring-2 focus:ring-red-500/50 focus:border-red-500/50 transition-all resize-none"
                       />
                     </div>
                   </div>
-                </div>
 
-                {/* Message */}
-                <div className="relative">
-                  <label
-                    htmlFor="message"
-                    className={`absolute left-4 transition-all duration-200 pointer-events-none ${focusedField === 'message' || formData.message
-                        ? 'top-2 text-xs text-red-400'
-                        : 'top-4 text-sm text-zinc-500'
-                      }`}
-                  >
-                    Message *
-                  </label>
-                  <textarea
-                    id="message"
-                    name="message"
-                    value={formData.message}
-                    onChange={handleChange}
-                    onFocus={() => setFocusedField('message')}
-                    onBlur={() => setFocusedField(null)}
-                    required
-                    rows={6}
-                    className="w-full px-4 pt-6 pb-3 glass-card rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-red-500/50 transition-all resize-none"
-                  />
-                </div>
-
-                {/* Submit Button */}
-                <motion.button
-                  type="submit"
-                  className="w-full btn-primary py-4 rounded-xl flex items-center justify-center gap-3 text-lg"
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                >
-                  <Send className="w-5 h-5" />
-                  Send Inquiry
-                </motion.button>
-              </form>
-            </div>
-          </motion.div>
-
-          {/* Contact Information */}
-          <motion.div
-            className="space-y-6"
-            initial={{ opacity: 0, x: 30 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.4 }}
-          >
-            {/* Contact Info Card */}
-            <div className="glass-card rounded-2xl p-6">
-              <h3 className="text-xl font-bold text-white mb-6">Contact Information</h3>
-              <div className="space-y-5">
-                {[
-                  { icon: Phone, label: "Phone", lines: ["+1 (555) 123-4567", "Toll Free: 1-800-AUTO-PRO"], color: "red" },
-                  { icon: Mail, label: "Email", lines: ["info@autopartspro.com", "support@autopartspro.com"], color: "blue" },
-                  { icon: MapPin, label: "Address", lines: ["123 Auto Street", "Detroit, MI 48201", "United States"], color: "green" },
-                  { icon: Clock, label: "Business Hours", lines: ["Mon-Fri: 8:00 AM - 6:00 PM", "Sat: 9:00 AM - 4:00 PM", "Sun: Closed"], color: "purple" },
-                ].map((item, idx) => (
-                  <motion.div
-                    key={idx}
-                    className="flex items-start gap-4 p-4 rounded-xl bg-white/5 hover:bg-white/10 transition-colors"
-                    whileHover={{ x: 5 }}
-                  >
-                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 ${item.color === 'red' ? 'bg-red-500/20' :
-                        item.color === 'blue' ? 'bg-blue-500/20' :
-                          item.color === 'green' ? 'bg-green-500/20' : 'bg-purple-500/20'
-                      }`}>
-                      <item.icon className={`w-5 h-5 ${item.color === 'red' ? 'text-red-400' :
-                          item.color === 'blue' ? 'text-blue-400' :
-                            item.color === 'green' ? 'text-green-400' : 'text-purple-400'
-                        }`} />
-                    </div>
-                    <div>
-                      <div className="font-semibold text-white mb-1">{item.label}</div>
-                      {item.lines.map((line, i) => (
-                        <div key={i} className="text-sm text-zinc-400">{line}</div>
-                      ))}
-                    </div>
-                  </motion.div>
-                ))}
+                  <div className="md:col-span-2 pt-4">
+                    <Button type="submit" variant="auto-primary" className="w-full h-16 text-lg font-bold">
+                      <Send className="w-5 h-5 mr-2" />
+                      Send Inquiry
+                    </Button>
+                  </div>
+                </form>
               </div>
             </div>
-
-            {/* WhatsApp */}
-            <motion.div
-              className="relative overflow-hidden rounded-2xl"
-              whileHover={{ scale: 1.02 }}
-            >
-              <div className="absolute inset-0 bg-gradient-to-br from-green-500 to-green-600" />
-              <motion.div
-                className="absolute inset-0 bg-gradient-to-br from-green-400/20 to-transparent"
-                animate={{ opacity: [0.5, 1, 0.5] }}
-                transition={{ duration: 2, repeat: Infinity }}
-              />
-              <div className="relative p-6 text-white">
-                <div className="flex items-center gap-3 mb-3">
-                  <MessageCircle className="w-6 h-6" />
-                  <h3 className="text-lg font-bold">WhatsApp Support</h3>
-                </div>
-                <p className="text-sm text-green-100 mb-4">
-                  Get instant answers to your questions via WhatsApp
-                </p>
-                <a
-                  href="#"
-                  className="block w-full bg-white text-green-600 text-center py-3 rounded-xl hover:bg-green-50 transition-colors font-semibold"
-                >
-                  Chat on WhatsApp
-                </a>
-              </div>
-            </motion.div>
-
-            {/* Map Placeholder */}
-            <div className="glass-card rounded-2xl overflow-hidden">
-              <div className="bg-gradient-to-br from-zinc-800 to-zinc-900 h-48 flex items-center justify-center relative">
-                <div className="absolute inset-0 opacity-30"
-                  style={{
-                    backgroundImage: `
-                      linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px),
-                      linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)
-                    `,
-                    backgroundSize: '20px 20px'
-                  }}
-                />
-                <motion.div
-                  animate={{ scale: [1, 1.2, 1] }}
-                  transition={{ duration: 2, repeat: Infinity }}
-                >
-                  <MapPin className="w-12 h-12 text-red-400" />
-                </motion.div>
-              </div>
-              <div className="p-4">
-                <p className="text-sm text-zinc-400">Visit our showroom to see our parts in person</p>
-              </div>
-            </div>
-          </motion.div>
+          </div>
         </div>
       </div>
     </div>
   );
 }
+
