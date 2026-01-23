@@ -17,8 +17,8 @@ import {
   ArrowDownRight
 } from "lucide-react";
 import { mockProducts } from "../../utils/constants";
-import { Button } from "../../components/ui/button";
-import { Input } from "../../components/ui/input";
+import { Button } from "../../components/ui/Button";
+import { Input } from "../../components/ui/Input";
 import { Badge } from "../../components/ui/Badge";
 import { AdminSidebar } from "../../components/admin/AdminSidebar";
 

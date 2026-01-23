@@ -1,6 +1,6 @@
 import { motion } from "motion/react";
 import { Badge } from "../ui/Badge";
-import { Button } from "../ui/button";
+import { Button } from "../ui/Button";
 import { Box, ChevronRight } from "lucide-react";
 import { Link } from "react-router";
 
