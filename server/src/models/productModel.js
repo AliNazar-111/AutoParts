@@ -16,12 +16,9 @@ const productSchema = new mongoose.Schema(
             trim: true
         },
         category: {
-            type: String,
-            required: [true, 'A product must belong to a category'],
-            enum: {
-                values: ['Engine', 'Suspension', 'Brakes', 'Electrical', 'Interior', 'Body'],
-                message: 'Category is either: Engine, Suspension, Brakes, Electrical, Interior, Body'
-            }
+            type: mongoose.Schema.ObjectId,
+            ref: 'Category',
+            required: [true, 'A product must belong to a category']
         },
         description: {
             type: String,
@@ -41,7 +38,7 @@ const productSchema = new mongoose.Schema(
             required: [true, 'A product must have an image']
         },
         model3D: {
-            url: String,
+            url: String, // Sketchfab or direct GLTF link
             modelType: {
                 type: String,
                 enum: ['sketchfab', 'gltf'],
@@ -55,13 +52,13 @@ const productSchema = new mongoose.Schema(
                 value: String
             }
         ],
-        createdAt: {
-            type: Date,
-            default: Date.now(),
-            select: false
+        featured: {
+            type: Boolean,
+            default: false
         }
     },
     {
+        timestamps: true,
         toJSON: { virtuals: true },
         toObject: { virtuals: true }
     }
