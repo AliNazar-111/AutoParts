@@ -22,6 +22,10 @@ app.use(cors());
 app.use(express.json({ limit: '10kb' }));
 
 // 2. ROUTES
+const authRoutes = require('./routes/authRoutes');
+
+app.use('/api/v1/auth', authRoutes);
+
 app.get('/health', (req, res) => {
     res.status(200).json({
         status: 'success',
