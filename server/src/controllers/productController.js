@@ -2,7 +2,24 @@ const Product = require('../models/productModel');
 
 // API Features Helper Logic
 const filterProducts = (query, queryObj) => {
-    const excludedFields = ['page', 'sort', 'limit', 'fields', 'search'];
+    // 1) Handle vehicle-specific filtering (Advanced compatibility search)
+    const vehicleFilter = {};
+    if (queryObj.make) vehicleFilter.make = queryObj.make;
+    if (queryObj.model) vehicleFilter.model = queryObj.model;
+    if (queryObj.year) {
+        const searchYear = Number(queryObj.year);
+        vehicleFilter.yearStart = { $lte: searchYear };
+        vehicleFilter.yearEnd = { $gte: searchYear };
+    }
+
+    if (Object.keys(vehicleFilter).length > 0) {
+        query = query.find({
+            compatibility: { $elemMatch: vehicleFilter }
+        });
+    }
+
+    // 2) Generic filtering
+    const excludedFields = ['page', 'sort', 'limit', 'fields', 'search', 'make', 'model', 'year'];
     excludedFields.forEach((el) => delete queryObj[el]);
 
     // Advanced filtering (e.g., gte, gt, lte, lt)

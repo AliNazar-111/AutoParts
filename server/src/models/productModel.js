@@ -45,7 +45,14 @@ const productSchema = new mongoose.Schema(
                 default: 'sketchfab'
             }
         },
-        compatibility: [String],
+        compatibility: [
+            {
+                make: { type: String, trim: true },
+                model: { type: String, trim: true },
+                yearStart: Number,
+                yearEnd: Number
+            }
+        ],
         specification: [
             {
                 label: String,
@@ -68,6 +75,9 @@ const productSchema = new mongoose.Schema(
 productSchema.index({ name: 1 });
 productSchema.index({ sku: 1 });
 productSchema.index({ category: 1 });
+productSchema.index({ 'compatibility.make': 1 });
+productSchema.index({ 'compatibility.model': 1 });
+productSchema.index({ 'compatibility.yearStart': 1, 'compatibility.yearEnd': 1 });
 
 const Product = mongoose.model('Product', productSchema);
 
