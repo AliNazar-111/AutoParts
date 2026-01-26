@@ -24,9 +24,11 @@ app.use(express.json({ limit: '10kb' }));
 // 2. ROUTES
 const authRoutes = require('./routes/authRoutes');
 const categoryRoutes = require('./routes/categoryRoutes');
+const productRoutes = require('./routes/productRoutes');
 
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/categories', categoryRoutes);
+app.use('/api/v1/products', productRoutes);
 
 app.get('/health', (req, res) => {
     res.status(200).json({
