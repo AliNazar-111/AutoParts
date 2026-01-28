@@ -26,11 +26,13 @@ const authRoutes = require('./routes/authRoutes');
 const categoryRoutes = require('./routes/categoryRoutes');
 const productRoutes = require('./routes/productRoutes');
 const inquiryRoutes = require('./routes/inquiryRoutes');
+const adminRoutes = require('./routes/adminRoutes');
 
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/categories', categoryRoutes);
 app.use('/api/v1/products', productRoutes);
 app.use('/api/v1/inquiries', inquiryRoutes);
+app.use('/api/v1/admin', adminRoutes);
 
 app.get('/health', (req, res) => {
     res.status(200).json({

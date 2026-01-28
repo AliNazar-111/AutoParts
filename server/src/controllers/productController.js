@@ -61,7 +61,7 @@ const paginateProducts = (query, page = 1, limit = 10) => {
 // GET all products (Public)
 exports.getAllProducts = async (req, res) => {
     try {
-        let query = Product.find().populate('category');
+        let query = Product.find({ active: { $ne: false } }).populate('category');
 
         // 1) Search
         query = searchProducts(query, req.query.search);
@@ -172,10 +172,14 @@ exports.updateProduct = async (req, res) => {
     }
 };
 
-// DELETE product (Admin only)
+// DELETE product (Admin only - soft delete)
 exports.deleteProduct = async (req, res) => {
     try {
-        const product = await Product.findByIdAndDelete(req.params.id);
+        const product = await Product.findByIdAndUpdate(
+            req.params.id,
+            { active: false },
+            { new: true }
+        );
 
         if (!product) {
             return res.status(404).json({
