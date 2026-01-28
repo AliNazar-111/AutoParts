@@ -12,6 +12,16 @@ const inquirySchema = new mongoose.Schema(
             ref: 'User',
             required: [true, 'An inquiry must be associated with a user']
         },
+        vehicleInfo: {
+            make: { type: String, required: [true, 'Please provide vehicle make'] },
+            model: { type: String, required: [true, 'Please provide vehicle model'] },
+            year: { type: Number, required: [true, 'Please provide vehicle year'] },
+            vin: { type: String, trim: true } // Optional VIN for precision
+        },
+        contactInfo: {
+            phone: { type: String, required: [true, 'Please provide a contact phone number'] },
+            email: { type: String, required: [true, 'Please provide a contact email'] }
+        },
         type: {
             type: String,
             enum: {
@@ -27,8 +37,8 @@ const inquirySchema = new mongoose.Schema(
         },
         status: {
             type: String,
-            enum: ['pending', 'contacted', 'resolved', 'closed'],
-            default: 'pending'
+            enum: ['new', 'contacted', 'closed'],
+            default: 'new'
         },
         adminNotes: {
             type: String,
