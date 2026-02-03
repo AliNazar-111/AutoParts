@@ -5,20 +5,31 @@ const AppError = require('../utils/appError');
 
 // GET all products (Public)
 exports.getAllProducts = catchAsync(async (req, res, next) => {
-    const features = new APIFeatures(Product.find({ active: { $ne: false } }).populate('category'), req.query)
+    // List-view projection: Only fetch what's needed for the product cards
+    const projection = 'name price imageUrl stockStatus category compatibility featured model3D';
+
+    const features = new APIFeatures(
+        Product.find({ active: { $ne: false } })
+            .populate('category', 'name')
+            .lean(),
+        req.query
+    )
         .search()
         .filter()
         .sort()
         .limitFields()
         .paginate();
 
-    const products = await features.query;
-
-    // We need to get total count for pagination UI
-    const countFeatures = new APIFeatures(Product.find({ active: { $ne: false } }), req.query)
-        .search()
-        .filter();
-    const total = await Product.countDocuments(countFeatures.query.getFilter());
+    // Execute data fetch and count in parallel to reduce total latency
+    const [products, total] = await Promise.all([
+        features.query.select(projection),
+        Product.countDocuments(
+            new APIFeatures(Product.find({ active: { $ne: false } }), req.query)
+                .search()
+                .filter()
+                .query.getFilter()
+        )
+    ]);
 
     const page = req.query.page * 1 || 1;
     const limit = req.query.limit * 1 || 10;
@@ -37,7 +48,9 @@ exports.getAllProducts = catchAsync(async (req, res, next) => {
 
 // GET single product (Public)
 exports.getProduct = catchAsync(async (req, res, next) => {
-    const product = await Product.findById(req.params.id).populate('category');
+    const product = await Product.findById(req.params.id)
+        .populate('category')
+        .lean();
 
     if (!product) {
         return next(new AppError('No product found with that ID', 404));

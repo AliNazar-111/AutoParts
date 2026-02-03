@@ -36,13 +36,10 @@ class APIFeatures {
 
     search() {
         if (this.queryString.search) {
-            const searchRegex = { $regex: this.queryString.search, $options: 'i' };
+            // Using MongoDB Text Search if index is present
+            // This is significantly faster for large catalogs
             this.query = this.query.find({
-                $or: [
-                    { name: searchRegex },
-                    { description: searchRegex },
-                    { sku: searchRegex }
-                ]
+                $text: { $search: this.queryString.search }
             });
         }
         return this;

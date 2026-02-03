@@ -76,13 +76,32 @@ const productSchema = new mongoose.Schema(
     }
 );
 
-// Indexes for performance
+// --- INDEXES FOR PERFORMANCE ---
+
+// 1. Text Search Index
+productSchema.index(
+    { name: 'text', description: 'text', sku: 'text' },
+    { weights: { name: 10, description: 5, sku: 2 }, name: 'ProductTextIndex' }
+);
+
+// 2. Catalog Filtering (Compound)
+// Most common pattern: category + make + active status
+productSchema.index({ category: 1, 'compatibility.make': 1, active: 1 });
+
+// 3. Vehicle Search (Compound)
+productSchema.index({
+    'compatibility.make': 1,
+    'compatibility.model': 1,
+    'compatibility.yearStart': 1,
+    'compatibility.yearEnd': 1
+});
+
+// 4. Price & Availability
+productSchema.index({ price: 1, stockStatus: 1 });
+
+// 5. Unique Identifiers
+productSchema.index({ sku: 1 }, { unique: true });
 productSchema.index({ name: 1 });
-productSchema.index({ sku: 1 });
-productSchema.index({ category: 1 });
-productSchema.index({ 'compatibility.make': 1 });
-productSchema.index({ 'compatibility.model': 1 });
-productSchema.index({ 'compatibility.yearStart': 1, 'compatibility.yearEnd': 1 });
 
 const Product = mongoose.model('Product', productSchema);
 
