@@ -4,10 +4,23 @@ const authController = require('../controllers/authController');
 
 const router = express.Router();
 
+const cacheMiddleware = require('../middleware/cacheMiddleware');
+
 // Public routes
-router.get('/', categoryController.getAllCategories);
-router.get('/parents', categoryController.getParentCategories);
-router.get('/:id', categoryController.getCategory);
+router.get('/', (req, res, next) => {
+    res.setHeader('Cache-Control', 'public, max-age=86400'); // 24 hours
+    next();
+}, cacheMiddleware(86400), categoryController.getAllCategories);
+
+router.get('/parents', (req, res, next) => {
+    res.setHeader('Cache-Control', 'public, max-age=86400'); // 24 hours
+    next();
+}, cacheMiddleware(86400), categoryController.getParentCategories);
+
+router.get('/:id', (req, res, next) => {
+    res.setHeader('Cache-Control', 'public, max-age=3600'); // 1 hour
+    next();
+}, cacheMiddleware(3600), categoryController.getCategory);
 
 const upload = require('../utils/upload');
 

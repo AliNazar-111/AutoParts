@@ -3,6 +3,8 @@ const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
 const rateLimit = require('express-rate-limit');
+const compression = require('compression');
+const hpp = require('hpp');
 
 const AppError = require('./utils/appError');
 const globalErrorHandler = require('./controllers/errorController');
@@ -19,19 +21,46 @@ if (process.env.NODE_ENV === 'development') {
     app.use(morgan('dev'));
 }
 
-// Limit requests from same API
+// Limit requests from same API (Global)
 const limiter = rateLimit({
     max: 100,
-    windowMs: 60 * 60 * 1000,
-    message: 'Too many requests from this IP, please try again in an hour!'
+    windowMs: 15 * 60 * 1000,
+    message: 'Too many requests from this IP, please try again in 15 minutes!'
 });
 app.use('/api', limiter);
+
+// Specific Rate Limiter for Inquiries (Spam Prevention)
+const inquiryLimiter = rateLimit({
+    max: 5,
+    windowMs: 60 * 60 * 1000, // 5 per hour
+    message: 'Too many inquiries submitted from this IP, please try again in an hour.'
+});
+app.use('/api/v1/inquiries', inquiryLimiter);
+
+// Specific Rate Limiter for Auth (Brute Force Protection)
+const authLimiter = rateLimit({
+    max: 10,
+    windowMs: 15 * 60 * 1000,
+    message: 'Too many login/registration attempts, please try again in 15 minutes.'
+});
+app.use('/api/v1/auth', authLimiter);
 
 // Body parser, reading data from body into req.body
 app.use(express.json({ limit: '10kb' }));
 
-// Serving static files
-app.use(express.static('public'));
+// Prevent HTTP Parameter Pollution
+app.use(hpp({
+    whitelist: ['price', 'stockStatus', 'category', 'make', 'model', 'year']
+}));
+
+// Payload compression
+app.use(compression());
+
+// Serving static files with caching
+app.use(express.static('public', {
+    maxAge: '1y',
+    immutable: true
+}));
 
 // 2. ROUTES
 const authRoutes = require('./routes/authRoutes');
