@@ -1,122 +1,82 @@
 const Inquiry = require('../models/inquiryModel');
+const catchAsync = require('../utils/catchAsync');
+const AppError = require('../utils/appError');
 
 // CREATE inquiry (Authenticated User)
-exports.createInquiry = async (req, res) => {
-    try {
-        // Add user ID from authenticated request
-        req.body.user = req.user.id;
+exports.createInquiry = catchAsync(async (req, res, next) => {
+    // Add user ID from authenticated request
+    req.body.user = req.user.id;
 
-        const newInquiry = await Inquiry.create(req.body);
+    const newInquiry = await Inquiry.create(req.body);
 
-        res.status(201).json({
-            status: 'success',
-            data: {
-                inquiry: newInquiry
-            }
-        });
-    } catch (err) {
-        res.status(400).json({
-            status: 'fail',
-            message: err.message
-        });
-    }
-};
+    res.status(201).json({
+        status: 'success',
+        data: {
+            inquiry: newInquiry
+        }
+    });
+});
 
 // GET all inquiries (Admin only)
-exports.getAllInquiries = async (req, res) => {
-    try {
-        const inquiries = await Inquiry.find().sort('-createdAt');
+exports.getAllInquiries = catchAsync(async (req, res, next) => {
+    const inquiries = await Inquiry.find()
+        .sort('-createdAt')
+        .lean();
 
-        res.status(200).json({
-            status: 'success',
-            results: inquiries.length,
-            data: {
-                inquiries
-            }
-        });
-    } catch (err) {
-        res.status(400).json({
-            status: 'fail',
-            message: err.message
-        });
-    }
-};
+    res.status(200).json({
+        status: 'success',
+        results: inquiries.length,
+        data: {
+            inquiries
+        }
+    });
+});
 
 // GET single inquiry (Admin only)
-exports.getInquiry = async (req, res) => {
-    try {
-        const inquiry = await Inquiry.findById(req.params.id);
+exports.getInquiry = catchAsync(async (req, res, next) => {
+    const inquiry = await Inquiry.findById(req.params.id).lean();
 
-        if (!inquiry) {
-            return res.status(404).json({
-                status: 'fail',
-                message: 'No inquiry found with that ID'
-            });
-        }
-
-        res.status(200).json({
-            status: 'success',
-            data: {
-                inquiry
-            }
-        });
-    } catch (err) {
-        res.status(400).json({
-            status: 'fail',
-            message: err.message
-        });
+    if (!inquiry) {
+        return next(new AppError('No inquiry found with that ID', 404));
     }
-};
+
+    res.status(200).json({
+        status: 'success',
+        data: {
+            inquiry
+        }
+    });
+});
 
 // UPDATE inquiry status/notes (Admin only)
-exports.updateInquiry = async (req, res) => {
-    try {
-        const inquiry = await Inquiry.findByIdAndUpdate(req.params.id, req.body, {
-            new: true,
-            runValidators: true
-        });
+exports.updateInquiry = catchAsync(async (req, res, next) => {
+    const inquiry = await Inquiry.findByIdAndUpdate(req.params.id, req.body, {
+        new: true,
+        runValidators: true
+    });
 
-        if (!inquiry) {
-            return res.status(404).json({
-                status: 'fail',
-                message: 'No inquiry found with that ID'
-            });
-        }
-
-        res.status(200).json({
-            status: 'success',
-            data: {
-                inquiry
-            }
-        });
-    } catch (err) {
-        res.status(400).json({
-            status: 'fail',
-            message: err.message
-        });
+    if (!inquiry) {
+        return next(new AppError('No inquiry found with that ID', 404));
     }
-};
+
+    res.status(200).json({
+        status: 'success',
+        data: {
+            inquiry
+        }
+    });
+});
 
 // DELETE inquiry (Admin only)
-exports.deleteInquiry = async (req, res) => {
-    try {
-        const inquiry = await Inquiry.findByIdAndDelete(req.params.id);
+exports.deleteInquiry = catchAsync(async (req, res, next) => {
+    const inquiry = await Inquiry.findByIdAndDelete(req.params.id);
 
-        if (!inquiry) {
-            return res.status(404).json({
-                status: 'fail',
-                message: 'No inquiry found with that ID'
-            });
-        }
-
-        res.status(204).json({
-            status: 'success',
-            data: null
-        });
-    } catch (err) {
-        res.status(400).json({
-            status: 'fail',
-            message: err.message
-        });
+    if (!inquiry) {
+        return next(new AppError('No inquiry found with that ID', 404));
     }
-};
+
+    res.status(204).json({
+        status: 'success',
+        data: null
+    });
+});

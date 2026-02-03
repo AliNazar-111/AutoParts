@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { motion } from "motion/react";
 import { Badge } from "../ui/Badge";
 import { Button } from "../ui/Button";
@@ -16,7 +17,7 @@ interface ProductCardProps {
     };
 }
 
-export function ProductCard({ product }: ProductCardProps) {
+export const ProductCard = memo(({ product }: ProductCardProps) => {
     return (
         <motion.div
             layout
@@ -82,4 +83,4 @@ export function ProductCard({ product }: ProductCardProps) {
             </div>
         </motion.div>
     );
-}
+});

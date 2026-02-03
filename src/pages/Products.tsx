@@ -1,13 +1,13 @@
-import { useState, useMemo, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useSearchParams } from "react-router";
 import { motion, AnimatePresence } from "motion/react";
-import { Search, LayoutGrid, Grid3X3, Settings, Disc, Wrench, Zap, Box, Loader2, AlertCircle } from "lucide-react";
-import { categories, Product } from "@/utils/constants";
-import { productService } from "@/services/productService";
-import { Input } from "@/components/ui/Input";
-import { Button } from "@/components/ui/Button";
+import { Search, LayoutGrid, Grid3X3, Box, Loader2, AlertCircle } from "lucide-react";
+import { categories, Product, makes } from "@/utils/constants";
 import { ProductCard } from "@/components/product/ProductCard";
 import { ProductFilters } from "@/components/product/ProductFilters";
+import { useProducts } from "@/hooks/useProducts";
+import { Input } from "@/components/ui/Input";
+import { Button } from "@/components/ui/Button";
 
 export default function Products() {
   const [searchParams] = useSearchParams();
@@ -18,47 +18,21 @@ export default function Products() {
   const [searchQuery, setSearchQuery] = useState("");
   const [viewMode, setViewMode] = useState<"grid" | "compact">("grid");
 
-  const [products, setProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [total, setTotal] = useState(0);
+  const { products, total, loading, error, fetchProducts } = useProducts();
 
-  const categoryIcons: Record<string, any> = {
-    "Engine": Settings,
-    "Brakes": Disc,
-    "Suspension": Wrench,
-    "Electrical": Zap,
-  };
-
-  // Extract all makes from categories for filtering? 
-  // In a real app, this would come from an API. For now, hardcoding common makes or keep it flexible.
-  const makes = ["all", "Honda", "Toyota", "Ford", "BMW", "Mercedes", "Volkswagen"];
-
-  const fetchProducts = useCallback(async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const response = await productService.getAll({
-        category: selectedCategory,
-        make: selectedMake,
-        search: searchQuery,
-        limit: 12
-      });
-      setProducts(response.data.products);
-      setTotal(response.total);
-    } catch (err: any) {
-      setError(err.message || "Failed to load products");
-    } finally {
-      setLoading(false);
-    }
-  }, [selectedCategory, selectedMake, searchQuery]);
+  const handleFetch = useCallback(() => {
+    fetchProducts({
+      category: selectedCategory === "all" ? undefined : selectedCategory,
+      make: selectedMake === "all" ? undefined : selectedMake,
+      search: searchQuery || undefined,
+      limit: 12
+    });
+  }, [selectedCategory, selectedMake, searchQuery, fetchProducts]);
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      fetchProducts();
-    }, 300); // Debounce search
+    const timer = setTimeout(handleFetch, 300);
     return () => clearTimeout(timer);
-  }, [fetchProducts]);
+  }, [handleFetch]);
 
   const clearFilters = () => {
     setSelectedCategory("all");
@@ -85,7 +59,7 @@ export default function Products() {
           {/* Sidebar */}
           <aside className="lg:col-span-3">
             <ProductFilters
-              categories={categories.map(c => ({ ...c, icon: categoryIcons[c.name] || Box }))}
+              categories={categories.map(c => ({ ...c, icon: Box }))}
               makes={makes}
               selectedCategory={selectedCategory}
               selectedMake={selectedMake}
@@ -137,7 +111,7 @@ export default function Products() {
                 </div>
                 <h3 className="text-2xl font-bold text-white mb-2">Something went wrong</h3>
                 <p className="text-zinc-500 mb-8">{error}</p>
-                <Button variant="auto-outline" onClick={() => fetchProducts()}>Try Again</Button>
+                <Button variant="auto-outline" onClick={handleFetch}>Try Again</Button>
               </div>
             ) : products.length > 0 ? (
               <motion.div
@@ -145,7 +119,7 @@ export default function Products() {
                 className={`grid gap-6 ${viewMode === "grid" ? "grid-cols-1 md:grid-cols-2 lg:grid-cols-3" : "grid-cols-2 md:grid-cols-3 lg:grid-cols-4"}`}
               >
                 <AnimatePresence>
-                  {products.map((product) => (
+                  {products.map((product: Product) => (
                     <ProductCard key={product.id} product={product} />
                   ))}
                 </AnimatePresence>
