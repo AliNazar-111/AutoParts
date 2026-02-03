@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router";
 import { motion, AnimatePresence } from "motion/react";
 import {
@@ -7,34 +7,68 @@ import {
   Box,
   ZoomIn,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  Loader2,
+  AlertCircle
 } from "lucide-react";
-import { mockProducts } from "@/utils/constants";
-import { Product3DViewer } from "@/components/product/Product3DViewer";
+import { Product } from "@/utils/constants";
+import { productService } from "@/services/productService";
+import { ModelViewer } from "@/components/product/ModelViewer";
 import { ProductInfo } from "@/components/product/ProductInfo";
+import { Button } from "@/components/ui/Button";
 
 export default function ProductDetails() {
   const { id } = useParams();
-  const product = mockProducts.find((p) => p.id === id);
+  const [product, setProduct] = useState<Product | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<"specs" | "compatibility">("specs");
   const [selectedImage, setSelectedImage] = useState(0);
+  const [show3D, setShow3D] = useState(false);
 
-  if (!product) {
+  useEffect(() => {
+    async function fetchProduct() {
+      if (!id) return;
+      try {
+        setLoading(true);
+        const response = await productService.getOne(id);
+        setProduct(response.data.product);
+      } catch (err: any) {
+        setError(err.message || "Failed to load product");
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchProduct();
+  }, [id]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[#0a0a0f] flex items-center justify-center">
+        <Loader2 className="w-10 h-10 animate-spin text-red-500" />
+      </div>
+    );
+  }
+
+  if (error || !product) {
     return (
       <div className="min-h-screen bg-[#0a0a0f] flex items-center justify-center">
         <motion.div
-          className="text-center glass-card rounded-2xl p-12"
+          className="text-center glass-card rounded-2xl p-12 border-red-500/20"
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
         >
-          <div className="w-16 h-16 bg-red-500/20 rounded-2xl flex items-center justify-center mx-auto mb-4">
-            <Box className="w-8 h-8 text-red-400" />
+          <div className="w-16 h-16 bg-red-500/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
+            <AlertCircle className="w-8 h-8 text-red-500" />
           </div>
-          <h2 className="text-2xl font-bold text-white mb-2">Product not found</h2>
-          <p className="text-zinc-400 mb-6">The product you're looking for doesn't exist.</p>
-          <Link to="/products" className="inline-flex items-center gap-2 text-red-500 font-bold hover:text-red-400">
-            <ArrowLeft className="w-4 h-4" />
-            Back to Products
+          <h2 className="text-2xl font-bold text-white mb-2">
+            {error ? "Oops!" : "Product not found"}
+          </h2>
+          <p className="text-zinc-400 mb-6">
+            {error || "The product you're looking for doesn't exist."}
+          </p>
+          <Link to="/products">
+            <Button variant="auto-outline">Back to Catalog</Button>
           </Link>
         </motion.div>
       </div>
@@ -57,9 +91,29 @@ export default function ProductDetails() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
           {/* Left Column - Visuals */}
           <div className="space-y-6">
-            {product.has3D && (
-              <Product3DViewer productName={product.name} />
-            )}
+            <div className="relative group">
+              {product.has3D && (
+                <motion.button
+                  onClick={() => setShow3D(true)}
+                  className="absolute top-4 right-4 z-10 bg-red-600 text-white font-bold py-2 px-4 rounded-xl flex items-center gap-2 shadow-xl shadow-red-600/20 hover:bg-red-500 transition-colors"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <Box className="w-4 h-4" />
+                  VIEW IN 3D
+                </motion.button>
+              )}
+
+              <AnimatePresence>
+                {show3D && (
+                  <ModelViewer
+                    url={(product as any).model3D?.url || "https://sketchfab.com/models/..."}
+                    modelType={(product as any).model3D?.modelType || "sketchfab"}
+                    onClose={() => setShow3D(false)}
+                  />
+                )}
+              </AnimatePresence>
+            </div>
 
             <div className="glass-card rounded-3xl p-4 space-y-4">
               <div className="relative aspect-video rounded-2xl overflow-hidden group">

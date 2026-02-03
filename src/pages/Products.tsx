@@ -1,8 +1,9 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect, useCallback } from "react";
 import { useSearchParams } from "react-router";
 import { motion, AnimatePresence } from "motion/react";
-import { Search, LayoutGrid, Grid3X3, Settings, Disc, Wrench, Zap, Box } from "lucide-react";
-import { mockProducts, categories } from "@/utils/constants";
+import { Search, LayoutGrid, Grid3X3, Settings, Disc, Wrench, Zap, Box, Loader2, AlertCircle } from "lucide-react";
+import { categories, Product } from "@/utils/constants";
+import { productService } from "@/services/productService";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import { ProductCard } from "@/components/product/ProductCard";
@@ -17,6 +18,11 @@ export default function Products() {
   const [searchQuery, setSearchQuery] = useState("");
   const [viewMode, setViewMode] = useState<"grid" | "compact">("grid");
 
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [total, setTotal] = useState(0);
+
   const categoryIcons: Record<string, any> = {
     "Engine": Settings,
     "Brakes": Disc,
@@ -24,19 +30,35 @@ export default function Products() {
     "Electrical": Zap,
   };
 
-  const makes = ["all", ...new Set(mockProducts.flatMap(p => p.compatibility.map(c => c.split(" ")[0])))];
+  // Extract all makes from categories for filtering? 
+  // In a real app, this would come from an API. For now, hardcoding common makes or keep it flexible.
+  const makes = ["all", "Honda", "Toyota", "Ford", "BMW", "Mercedes", "Volkswagen"];
 
-  const filteredProducts = useMemo(() => {
-    return mockProducts.filter((product) => {
-      const matchesCategory = selectedCategory === "all" || product.category.toLowerCase() === selectedCategory.toLowerCase();
-      const matchesMake = selectedMake === "all" || product.compatibility.some((c) => c.toLowerCase().includes(selectedMake.toLowerCase()));
-      const matchesSearch = searchQuery === "" ||
-        product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        product.description.toLowerCase().includes(searchQuery.toLowerCase());
-
-      return matchesCategory && matchesMake && matchesSearch;
-    });
+  const fetchProducts = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const response = await productService.getAll({
+        category: selectedCategory,
+        make: selectedMake,
+        search: searchQuery,
+        limit: 12
+      });
+      setProducts(response.data.products);
+      setTotal(response.total);
+    } catch (err: any) {
+      setError(err.message || "Failed to load products");
+    } finally {
+      setLoading(false);
+    }
   }, [selectedCategory, selectedMake, searchQuery]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      fetchProducts();
+    }, 300); // Debounce search
+    return () => clearTimeout(timer);
+  }, [fetchProducts]);
 
   const clearFilters = () => {
     setSelectedCategory("all");
@@ -56,7 +78,7 @@ export default function Products() {
           >
             Auto Parts <span className="text-gradient-red">Catalog</span>
           </motion.h1>
-          <p className="text-zinc-500">Showing {filteredProducts.length} premium components</p>
+          <p className="text-zinc-500">Showing {total} premium components</p>
         </div>
 
         <div className="flex flex-col lg:grid lg:grid-cols-12 gap-8">
@@ -102,14 +124,28 @@ export default function Products() {
               </div>
             </div>
 
-            {/* Grid */}
-            {filteredProducts.length > 0 ? (
+            {/* Content Area */}
+            {loading ? (
+              <div className="flex flex-col items-center justify-center py-40 text-zinc-500">
+                <Loader2 className="w-10 h-10 animate-spin mb-4 text-red-500" />
+                <p className="text-lg">Tuning the engines...</p>
+              </div>
+            ) : error ? (
+              <div className="glass-card rounded-3xl p-20 text-center border-red-500/20">
+                <div className="w-20 h-20 bg-red-500/10 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                  <AlertCircle className="w-10 h-10 text-red-500" />
+                </div>
+                <h3 className="text-2xl font-bold text-white mb-2">Something went wrong</h3>
+                <p className="text-zinc-500 mb-8">{error}</p>
+                <Button variant="auto-outline" onClick={() => fetchProducts()}>Try Again</Button>
+              </div>
+            ) : products.length > 0 ? (
               <motion.div
                 layout
                 className={`grid gap-6 ${viewMode === "grid" ? "grid-cols-1 md:grid-cols-2 lg:grid-cols-3" : "grid-cols-2 md:grid-cols-3 lg:grid-cols-4"}`}
               >
                 <AnimatePresence>
-                  {filteredProducts.map((product) => (
+                  {products.map((product) => (
                     <ProductCard key={product.id} product={product} />
                   ))}
                 </AnimatePresence>

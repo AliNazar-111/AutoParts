@@ -79,6 +79,7 @@ exports.getParentCategories = async (req, res) => {
 // CREATE category (Admin only)
 exports.createCategory = async (req, res) => {
     try {
+        if (req.file) req.body.image = `/img/products/${req.file.filename}`;
         const newCategory = await Category.create(req.body);
 
         res.status(201).json({
@@ -98,6 +99,7 @@ exports.createCategory = async (req, res) => {
 // UPDATE category (Admin only)
 exports.updateCategory = async (req, res) => {
     try {
+        if (req.file) req.body.image = `/img/products/${req.file.filename}`;
         const category = await Category.findByIdAndUpdate(
             req.params.id,
             req.body,

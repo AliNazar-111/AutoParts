@@ -8,11 +8,13 @@ const router = express.Router();
 router.get('/', productController.getAllProducts);
 router.get('/:id', productController.getProduct);
 
+const upload = require('../utils/upload');
+
 // Admin-only routes (protected)
 router.use(authController.protect, authController.restrictTo('admin'));
 
-router.post('/', productController.createProduct);
-router.patch('/:id', productController.updateProduct);
+router.post('/', upload.single('image'), productController.createProduct);
+router.patch('/:id', upload.single('image'), productController.updateProduct);
 router.delete('/:id', productController.deleteProduct);
 
 module.exports = router;

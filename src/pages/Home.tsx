@@ -122,7 +122,7 @@ export default function Home() {
                 <div className="relative glass-card rounded-3xl p-8 border border-white/10">
                   <motion.div animate={{ rotateY: 360 }} transition={{ duration: 20, repeat: Infinity, ease: "linear" }}>
                     <div className="w-64 h-64 rounded-2xl bg-gradient-to-br from-red-500/10 to-blue-500/10 border border-white/10 flex items-center justify-center">
-                      <Box className="w-32 h-32 text-white/40" />
+                      <img className="w-full h-full object-cover rounded-2xl" src="https://i.ytimg.com/vi/zkkNLx9I6Vo/maxresdefault.jpg" alt="" />
                     </div>
                   </motion.div>
                 </div>
