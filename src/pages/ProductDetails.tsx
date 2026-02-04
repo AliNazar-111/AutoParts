@@ -109,6 +109,7 @@ export default function ProductDetails() {
                   <ModelViewer
                     url={(product as any).model3D?.url || "https://sketchfab.com/models/..."}
                     modelType={(product as any).model3D?.modelType || "sketchfab"}
+                    poster={product.image}
                     onClose={() => setShow3D(false)}
                   />
                 )}

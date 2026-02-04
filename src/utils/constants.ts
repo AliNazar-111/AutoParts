@@ -169,3 +169,5 @@ export const categories: Category[] = [
     color: "purple",
   },
 ];
+
+export const makes = ["all", "Honda", "Toyota", "Ford", "BMW", "Mercedes", "Volkswagen"];
