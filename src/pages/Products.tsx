@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useSearchParams } from "react-router";
 import { motion, AnimatePresence } from "motion/react";
-import { Search, LayoutGrid, Grid3X3, Box, Loader2, AlertCircle } from "lucide-react";
+import { Search, LayoutGrid, Grid3X3, Box, Loader2, AlertCircle, Database, FilterX } from "lucide-react";
 import { categories, Product, makes } from "@/utils/constants";
 import { ProductCard } from "@/components/product/ProductCard";
 import { ProductFilters } from "@/components/product/ProductFilters";
@@ -41,99 +41,123 @@ export default function Products() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0a0a0f] pt-24 pb-20">
-      <div className="container mx-auto px-4">
-        {/* Header */}
-        <div className="mb-12">
-          <motion.h1
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            className="text-4xl font-bold text-white mb-2"
-          >
-            Auto Parts <span className="text-gradient-red">Catalog</span>
-          </motion.h1>
-          <p className="text-zinc-500">Showing {total} premium components</p>
+    <div className="min-h-screen bg-graphite-950 pt-32 pb-24">
+      {/* Background Staging Elements */}
+      <div className="absolute top-0 right-0 w-1/3 h-1/2 bg-[radial-gradient(circle_at_top_right,var(--primary-glow)_0%,transparent_70%)] opacity-10 pointer-events-none" />
+
+      <div className="container mx-auto px-6 relative z-10">
+        {/* Header Staging */}
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
+          <div>
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-1.5 h-6 bg-primary rounded-full" />
+              <span className="text-[10px] font-black uppercase tracking-[0.4em] text-zinc-500">Inventory Distribution</span>
+            </div>
+            <motion.h1
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              className="text-5xl font-black text-white uppercase tracking-tighter font-heading"
+            >
+              Component <span className="text-primary">Catalog</span>
+            </motion.h1>
+            <p className="text-zinc-500 font-medium mt-2 flex items-center gap-2">
+              <Database className="w-3.5 h-3.5" />
+              Accessing {total} registered high-performance units
+            </p>
+          </div>
+
+          <div className="flex items-center gap-4 bg-white/5 p-1.5 rounded-2xl border border-white/5">
+            <button
+              onClick={() => setViewMode("grid")}
+              className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-[10px] uppercase tracking-widest transition-all ${viewMode === "grid" ? "bg-primary text-white shadow-lg shadow-primary/20" : "text-zinc-500 hover:text-zinc-300"}`}
+            >
+              <LayoutGrid className="w-4 h-4" />
+              Grid Stage
+            </button>
+            <button
+              onClick={() => setViewMode("compact")}
+              className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-[10px] uppercase tracking-widest transition-all ${viewMode === "compact" ? "bg-primary text-white shadow-lg shadow-primary/20" : "text-zinc-500 hover:text-zinc-300"}`}
+            >
+              <Grid3X3 className="w-4 h-4" />
+              Matrix View
+            </button>
+          </div>
         </div>
 
-        <div className="flex flex-col lg:grid lg:grid-cols-12 gap-8">
-          {/* Sidebar */}
-          <aside className="lg:col-span-3">
-            <ProductFilters
-              categories={categories.map(c => ({ ...c, icon: Box }))}
-              makes={makes}
-              selectedCategory={selectedCategory}
-              selectedMake={selectedMake}
-              onCategoryChange={setSelectedCategory}
-              onMakeChange={setSelectedMake}
-              onClear={clearFilters}
-            />
+        <div className="flex flex-col lg:grid lg:grid-cols-12 gap-12">
+          {/* Sidebar / Filters */}
+          <aside className="lg:col-span-3 space-y-8">
+            <div className="glass-stage rounded-3xl p-2 border border-white/5">
+              <ProductFilters
+                categories={categories.map(c => ({ ...c, icon: Box }))}
+                makes={makes}
+                selectedCategory={selectedCategory}
+                selectedMake={selectedMake}
+                onCategoryChange={setSelectedCategory}
+                onMakeChange={setSelectedMake}
+                onClear={clearFilters}
+              />
+            </div>
           </aside>
 
-          {/* Main Content */}
+          {/* Main Content Area */}
           <main className="lg:col-span-9">
-            {/* Search and View Toggle */}
-            <div className="flex flex-col md:flex-row gap-4 mb-8">
-              <div className="relative flex-1">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-zinc-500" />
+            {/* Extended Search Interface */}
+            <div className="relative mb-12 group">
+              <div className="absolute inset-0 bg-primary/5 blur-3xl opacity-0 group-focus-within:opacity-100 transition-opacity duration-700" />
+              <div className="relative">
+                <Search className="absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 text-zinc-600 group-focus-within:text-primary transition-colors" />
                 <Input
-                  placeholder="Search by part name, brand or serial..."
+                  placeholder="Query part nomenclature, serial IDs or manufacturer specifications..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-12 h-14"
+                  className="pl-16 h-16 bg-white/2 border-white/5 rounded-2xl text-lg font-medium focus-visible:bg-white/5 placeholder:text-zinc-700"
                 />
-              </div>
-              <div className="flex bg-white/5 p-1 rounded-xl border border-white/5">
-                <button
-                  onClick={() => setViewMode("grid")}
-                  className={`p-3 rounded-lg transition-all ${viewMode === "grid" ? "bg-red-500 text-white shadow-lg shadow-red-500/20" : "text-zinc-500"}`}
-                >
-                  <LayoutGrid className="w-5 h-5" />
-                </button>
-                <button
-                  onClick={() => setViewMode("compact")}
-                  className={`p-3 rounded-lg transition-all ${viewMode === "compact" ? "bg-red-500 text-white shadow-lg shadow-red-500/20" : "text-zinc-500"}`}
-                >
-                  <Grid3X3 className="w-5 h-5" />
-                </button>
               </div>
             </div>
 
-            {/* Content Area */}
-            {loading ? (
-              <div className="flex flex-col items-center justify-center py-40 text-zinc-500">
-                <Loader2 className="w-10 h-10 animate-spin mb-4 text-red-500" />
-                <p className="text-lg">Tuning the engines...</p>
-              </div>
-            ) : error ? (
-              <div className="glass-card rounded-3xl p-20 text-center border-red-500/20">
-                <div className="w-20 h-20 bg-red-500/10 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                  <AlertCircle className="w-10 h-10 text-red-500" />
+            {/* Catalog Grid Stage */}
+            <div className="min-h-[600px] relative">
+              {loading ? (
+                <div className="absolute inset-0 flex flex-col items-center justify-center text-zinc-500">
+                  <div className="relative mb-8">
+                    <Loader2 className="w-16 h-16 animate-spin text-primary opacity-20" />
+                    <Box className="absolute inset-0 m-auto w-6 h-6 text-primary animate-pulse" />
+                  </div>
+                  <p className="text-xs font-black uppercase tracking-[0.4em]">Calibrating Data Streams</p>
+                  <p className="text-[9px] font-bold uppercase tracking-widest mt-4 text-zinc-700 italic">Syncing with primary OEM inventory servers...</p>
                 </div>
-                <h3 className="text-2xl font-bold text-white mb-2">Something went wrong</h3>
-                <p className="text-zinc-500 mb-8">{error}</p>
-                <Button variant="auto-outline" onClick={handleFetch}>Try Again</Button>
-              </div>
-            ) : products.length > 0 ? (
-              <motion.div
-                layout
-                className={`grid gap-6 ${viewMode === "grid" ? "grid-cols-1 md:grid-cols-2 lg:grid-cols-3" : "grid-cols-2 md:grid-cols-3 lg:grid-cols-4"}`}
-              >
-                <AnimatePresence>
-                  {products.map((product: Product) => (
-                    <ProductCard key={product.id} product={product} />
-                  ))}
-                </AnimatePresence>
-              </motion.div>
-            ) : (
-              <div className="glass-card rounded-3xl p-20 text-center">
-                <div className="w-20 h-20 bg-white/5 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                  <Search className="w-10 h-10 text-zinc-600" />
+              ) : error ? (
+                <div className="glass-stage rounded-[3rem] p-24 text-center industrial-border border-primary/20">
+                  <div className="w-24 h-24 bg-primary/10 rounded-[2rem] flex items-center justify-center mx-auto mb-8 shadow-2xl">
+                    <AlertCircle className="w-10 h-10 text-primary animate-pulse" />
+                  </div>
+                  <h3 className="text-3xl font-black text-white mb-4 uppercase tracking-tighter font-heading">Protocol Interruption</h3>
+                  <p className="text-zinc-500 mb-10 max-w-sm mx-auto font-medium">{error}</p>
+                  <Button variant="industrial" onClick={handleFetch} className="h-14 px-10">Re-initialize Connection</Button>
                 </div>
-                <h3 className="text-2xl font-bold text-white mb-2">No Parts Found</h3>
-                <p className="text-zinc-500 mb-8">Try adjusting your filters or search terms.</p>
-                <Button variant="auto-outline" onClick={clearFilters}>Clear All Filters</Button>
-              </div>
-            )}
+              ) : products.length > 0 ? (
+                <motion.div
+                  layout
+                  className={`grid gap-10 ${viewMode === "grid" ? "grid-cols-1 md:grid-cols-2 lg:grid-cols-3" : "grid-cols-2 md:grid-cols-3 lg:grid-cols-4"}`}
+                >
+                  <AnimatePresence mode="popLayout">
+                    {products.map((product: Product) => (
+                      <ProductCard key={product.id} product={product} />
+                    ))}
+                  </AnimatePresence>
+                </motion.div>
+              ) : (
+                <div className="glass-stage rounded-[3rem] p-24 text-center industrial-border">
+                  <div className="w-24 h-24 bg-white/5 rounded-[2rem] flex items-center justify-center mx-auto mb-8 shadow-inner">
+                    <FilterX className="w-10 h-10 text-zinc-700" />
+                  </div>
+                  <h3 className="text-3xl font-black text-white mb-4 uppercase tracking-tighter font-heading">Zero Matches Found</h3>
+                  <p className="text-zinc-500 mb-10 max-w-sm mx-auto font-medium">No components currently match the specified filter matrix. Adjust your parameters to continue.</p>
+                  <Button variant="outline" onClick={clearFilters} className="h-14 px-10">Reset Filter Matrix</Button>
+                </div>
+              )}
+            </div>
           </main>
         </div>
       </div>

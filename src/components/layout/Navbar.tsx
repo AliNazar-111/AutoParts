@@ -28,64 +28,60 @@ export default function Header() {
 
   const navLinks = [
     { path: "/", label: "Home" },
-    { path: "/products", label: "Products" },
-    { path: "/contact", label: "Contact" },
+    { path: "/products", label: "Catalog" },
+    { path: "/contact", label: "Inquiry" },
   ];
 
   return (
     <>
       <motion.header
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled
-          ? "bg-[#0a0a0f] border-b border-white/5 py-3 shadow-2xl"
-          : "bg-[#0a0a0f] border-b border-white/5 py-5"
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${isScrolled
+          ? "glass-stage border-b border-white/10 py-3"
+          : "bg-transparent py-6"
           }`}
         initial={{ y: -100 }}
         animate={{ y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        <div className="container mx-auto px-4">
+        <div className="container mx-auto px-6">
           <div className="flex items-center justify-between">
             {/* Logo */}
-            <Link to="/" className="flex items-center gap-3 group">
+            <Link to="/" className="flex items-center gap-4 group">
               <motion.div
                 className="relative"
-                whileHover={{ rotate: 180 }}
-                transition={{ duration: 0.5 }}
+                whileHover={{ rotate: 90 }}
+                transition={{ type: "spring", stiffness: 200 }}
               >
-                <div className="absolute inset-0 bg-red-500/20 blur-xl rounded-full" />
-                <Settings className="w-10 h-10 text-red-500 relative z-10" />
+                <div className="absolute inset-0 bg-primary/20 blur-xl rounded-full" />
+                <Settings className="w-10 h-10 text-primary relative z-10" />
               </motion.div>
               <div className="flex flex-col">
-                <div className="text-[20px] font-bold text-white group-hover:text-red-500 transition-colors leading-none">
-                  AutoParts <span className="text-red-500">Pro</span>
+                <div className="text-xl font-black font-heading tracking-tighter text-white group-hover:text-primary transition-colors leading-none uppercase">
+                  AutoPart <span className="text-primary">Pro</span>
                 </div>
-                <div className="text-[12px] text-zinc-400 mt-1">Premium Auto Components For Toyota</div>
+                <div className="text-[10px] text-zinc-500 mt-1 uppercase tracking-[0.2em] font-medium">Precision Management</div>
               </div>
             </Link>
 
             {/* Navigation - Desktop */}
-            <nav className="hidden md:flex items-center gap-2">
+            <nav className="hidden md:flex items-center gap-1 bg-graphite-900/50 p-1 rounded-2xl border border-white/5">
               {navLinks.map((link) => (
                 <Link
                   key={link.path}
                   to={link.path}
-                  className="relative px-6 py-2 group flex items-center justify-center"
+                  className="relative px-6 py-2.5 group"
                 >
-                  <span className={`relative z-10 text-sm font-bold transition-all duration-300 ${isActive(link.path) ? "text-white" : "text-zinc-500 group-hover:text-white"
+                  <span className={`relative z-10 text-xs font-bold uppercase tracking-widest transition-all duration-300 ${isActive(link.path) ? "text-white" : "text-zinc-500 group-hover:text-white"
                     }`}>
                     {link.label}
                   </span>
                   {isActive(link.path) && (
                     <motion.div
-                      className="absolute inset-x-0 inset-y-0 border border-red-500/40 rounded-lg bg-red-500/10 shadow-[0_0_15px_rgba(239,68,68,0.2)]"
-                      layoutId="activeNavIndicator"
-                      transition={{ type: "spring", duration: 0.5 }}
+                      className="absolute inset-0 rounded-xl bg-white/5 border border-white/10 shadow-lg"
+                      layoutId="navGlow"
+                      transition={{ type: "spring", duration: 0.6 }}
                     />
                   )}
-                  <motion.span
-                    className={`absolute bottom-0 left-1/2 -translate-x-1/2 h-0.5 bg-red-500 rounded-full transition-all duration-300 ${isActive(link.path) ? "w-1/2 opacity-100" : "w-0 group-hover:w-1/2 opacity-0 group-hover:opacity-100"}`}
-                    style={{ bottom: '-4px' }}
-                  />
                 </Link>
               ))}
             </nav>
@@ -94,21 +90,21 @@ export default function Header() {
               {/* Contact Button - Desktop */}
               <Link
                 to="/contact"
-                className="hidden md:flex bg-red-600 hover:bg-red-500 text-white font-bold px-6 py-2.5 rounded-xl shadow-lg shadow-red-600/20 items-center gap-2 transition-all active:scale-95"
+                className="hidden md:flex btn-ember"
               >
                 <Phone className="w-4 h-4" />
-                Contact Us
+                GET A QUOTE
               </Link>
 
               {/* Mobile Menu Toggle */}
               <button
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className="md:hidden p-2 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 transition-colors"
+                className="md:hidden p-3 rounded-xl bg-graphite-800 hover:bg-graphite-700 border border-white/5 transition-colors"
               >
                 {isMobileMenuOpen ? (
-                  <X className="w-6 h-6 text-white" />
+                  <X className="w-5 h-5 text-white" />
                 ) : (
-                  <Menu className="w-6 h-6 text-white" />
+                  <Menu className="w-5 h-5 text-white" />
                 )}
               </button>
             </div>
@@ -116,7 +112,7 @@ export default function Header() {
         </div>
       </motion.header>
 
-      {/* Mobile Menu */}
+      {/* Mobile Menu Overlay */}
       <AnimatePresence>
         {isMobileMenuOpen && (
           <motion.div
@@ -125,24 +121,22 @@ export default function Header() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
           >
-            {/* Backdrop */}
             <motion.div
-              className="absolute inset-0 bg-black/80 backdrop-blur-sm"
+              className="absolute inset-0 bg-black/90 backdrop-blur-xl"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setIsMobileMenuOpen(false)}
             />
 
-            {/* Menu Panel */}
             <motion.div
-              className="absolute top-0 right-0 w-80 h-full bg-[#0a0a0f] border-l border-white/10 p-6 pt-24"
+              className="absolute top-0 right-0 w-full max-w-sm h-full bg-graphite-950 border-l border-white/5 p-8 pt-32"
               initial={{ x: "100%" }}
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
-              transition={{ type: "spring", damping: 25, stiffness: 200 }}
+              transition={{ type: "spring", damping: 30, stiffness: 200 }}
             >
-              <nav className="space-y-2">
+              <nav className="space-y-4">
                 {navLinks.map((link, idx) => (
                   <motion.div
                     key={link.path}
@@ -152,30 +146,30 @@ export default function Header() {
                   >
                     <Link
                       to={link.path}
-                      className={`flex items-center justify-between p-4 rounded-xl transition-colors ${isActive(link.path)
-                        ? "bg-red-500/20 text-red-400"
-                        : "text-white hover:bg-white/5"
+                      className={`flex items-center justify-between p-5 rounded-2xl border transition-all ${isActive(link.path)
+                        ? "bg-primary/10 border-primary/20 text-white"
+                        : "text-zinc-400 border-white/5 hover:bg-white/5"
                         }`}
                     >
-                      <span className="font-medium">{link.label}</span>
-                      <ChevronRight className="w-5 h-5" />
+                      <span className="font-bold tracking-tight">{link.label}</span>
+                      <ChevronRight className={`w-5 h-5 ${isActive(link.path) ? "text-primary" : "text-zinc-600"}`} />
                     </Link>
                   </motion.div>
                 ))}
               </nav>
 
               <motion.div
-                className="mt-8"
+                className="mt-12"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3 }}
+                transition={{ delay: 0.4 }}
               >
                 <Link
                   to="/contact"
-                  className="btn-primary w-full flex items-center justify-center gap-2 py-4"
+                  className="btn-ember w-full py-5 text-sm"
                 >
                   <Phone className="w-5 h-5" />
-                  Contact Us
+                  REQUEST QUOTE
                 </Link>
               </motion.div>
             </motion.div>
@@ -183,8 +177,8 @@ export default function Header() {
         )}
       </AnimatePresence>
 
-      {/* Spacer for fixed header */}
-      <div className="h-20" />
+      {/* Hero Spacer */}
+      <div className="h-24 md:h-32" />
     </>
   );
 }

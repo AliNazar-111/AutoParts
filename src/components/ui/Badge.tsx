@@ -5,22 +5,22 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "./Utils";
 
 const badgeVariants = cva(
-  "inline-flex items-center justify-center rounded-md border px-2 py-0.5 text-xs font-medium w-fit whitespace-nowrap shrink-0 [&>svg]:size-3 gap-1 [&>svg]:pointer-events-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive transition-[color,box-shadow] overflow-hidden",
+  "inline-flex items-center justify-center rounded-lg border px-2.5 py-0.5 text-[10px] font-black uppercase tracking-widest w-fit whitespace-nowrap shrink-0 [&>svg]:size-3 gap-1.5 [&>svg]:pointer-events-none transition-all duration-300",
   {
     variants: {
       variant: {
         default:
-          "border-transparent bg-primary text-primary-foreground [a&]:hover:bg-primary/90",
+          "border-transparent bg-primary text-primary-foreground",
         secondary:
-          "border-transparent bg-secondary text-secondary-foreground [a&]:hover:bg-secondary/90",
+          "border-white/10 bg-graphite-800 text-zinc-400",
         destructive:
-          "border-transparent bg-destructive text-white [a&]:hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60",
+          "border-destructive/20 bg-destructive/10 text-destructive",
+        success:
+          "border-green-500/20 bg-green-500/10 text-green-500",
+        warning:
+          "border-yellow-500/20 bg-yellow-500/10 text-yellow-500",
         outline:
-          "text-foreground [a&]:hover:bg-accent [a&]:hover:text-accent-foreground",
-        "auto-success": "border-transparent bg-green-500/10 text-green-500",
-        "auto-warning": "border-transparent bg-yellow-500/10 text-yellow-500",
-        "auto-danger": "border-transparent bg-red-500/10 text-red-500",
-        "auto-outline": "border-red-500/30 text-red-500 bg-red-500/5",
+          "border-white/10 bg-transparent text-white",
       },
     },
     defaultVariants: {

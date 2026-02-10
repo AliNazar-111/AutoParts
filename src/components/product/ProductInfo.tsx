@@ -1,6 +1,6 @@
 import { Badge } from "../ui/Badge";
 import { Button } from "../ui/Button";
-import { Info, CheckCircle2, Package, Truck, MessageSquare, Phone } from "lucide-react";
+import { Info, CheckCircle2, Package, Truck, MessageSquare, Phone, ShieldCheck, Zap } from "lucide-react";
 
 interface ProductInfoProps {
     product: any;
@@ -8,53 +8,63 @@ interface ProductInfoProps {
 
 export function ProductInfo({ product }: ProductInfoProps) {
     return (
-        <div className="space-y-8">
+        <div className="space-y-10">
             <div>
-                <div className="flex flex-wrap items-center gap-3 mb-4">
-                    <Badge variant="auto-outline" className="text-[10px] uppercase tracking-wider py-1 px-3">
-                        Part #{product.partNumber}
-                    </Badge>
-                    <Badge variant={product.stockStatus === "In Stock" ? "auto-success" : "auto-warning"}>
+                <div className="flex flex-wrap items-center gap-4 mb-6">
+                    <div className="flex items-center gap-2 px-3 py-1 rounded-lg bg-white/5 border border-white/10">
+                        <Zap className="w-3 h-3 text-primary animate-pulse" />
+                        <span className="text-[10px] font-black text-zinc-400 uppercase tracking-widest">Part #{product.partNumber}</span>
+                    </div>
+                    <Badge variant={product.stockStatus === "In Stock" ? "success" : "warning"}>
                         {product.stockStatus}
                     </Badge>
                 </div>
 
-                <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
+                <h1 className="text-5xl md:text-6xl font-black text-white mb-6 uppercase tracking-tighter font-heading leading-none">
                     {product.name}
                 </h1>
 
-                <div className="flex items-baseline gap-4 mb-6">
-                    <span className="text-4xl font-bold text-red-500">${product.price.toLocaleString()}</span>
-                    <span className="text-zinc-500 line-through text-lg">${(product.price * 1.2).toLocaleString()}</span>
+                <div className="flex items-center gap-6 mb-8 p-6 glass-stage rounded-2xl border border-white/5 inline-flex">
+                    <div className="flex flex-col">
+                        <span className="text-[10px] text-zinc-500 font-bold uppercase tracking-widest mb-1">Industrial Valuation</span>
+                        <span className="text-4xl font-black text-white font-heading">${product.price.toLocaleString()} <span className="text-zinc-600 text-lg">USD</span></span>
+                    </div>
+                    <div className="w-[1px] h-10 bg-white/10" />
+                    <div className="flex flex-col">
+                        <span className="text-[10px] text-zinc-500 font-bold uppercase tracking-widest mb-1">MSRP Base</span>
+                        <span className="text-xl font-bold text-zinc-600 line-through">${(product.price * 1.2).toLocaleString()}</span>
+                    </div>
                 </div>
 
-                <p className="text-zinc-400 text-lg leading-relaxed mb-8">
+                <p className="text-zinc-500 text-lg leading-relaxed mb-10 font-medium max-w-xl">
                     {product.description}
                 </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
                 {[
-                    { icon: Package, label: "OEM Quality Guaranteed" },
-                    { icon: Truck, label: "Next Day Dispatch Available" },
-                    { icon: CheckCircle2, label: "Verified Compatibility" },
-                    { icon: Info, label: "12-Month Warranty" },
+                    { icon: ShieldCheck, label: "OEM Precision Certified" },
+                    { icon: Truck, label: "Priority Logistics Ready" },
+                    { icon: Package, label: "Industrial-Grade Seal" },
+                    { icon: Info, label: "12-Month Performance Bond" },
                 ].map((item, i) => (
-                    <div key={i} className="flex items-center gap-3 p-4 bg-white/5 rounded-2xl border border-white/5">
-                        <item.icon className="w-5 h-5 text-red-500" />
-                        <span className="text-sm font-medium text-white">{item.label}</span>
+                    <div key={i} className="flex items-center gap-4 p-5 rounded-2xl border border-white/5 bg-white/2 hover:border-primary/20 transition-all group">
+                        <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center group-hover:bg-primary/20 transition-all">
+                            <item.icon className="w-5 h-5 text-zinc-500 group-hover:text-primary transition-colors" />
+                        </div>
+                        <span className="text-xs font-black uppercase tracking-widest text-zinc-400 group-hover:text-white transition-colors">{item.label}</span>
                     </div>
                 ))}
             </div>
 
-            <div className="flex flex-col sm:flex-row gap-4">
-                <Button variant="auto-primary" size="lg" className="flex-1 py-7 text-lg group">
-                    <Phone className="w-5 h-5 mr-2" />
-                    Contact Seller
+            <div className="flex flex-col sm:flex-row gap-6">
+                <Button variant="default" size="lg" className="flex-1 h-16 text-sm font-black group">
+                    <Phone className="w-4 h-4 mr-3" />
+                    ENGAGE ADVISOR
                 </Button>
-                <Button variant="auto-secondary" size="lg" className="flex-1 py-7 text-lg">
-                    <MessageSquare className="w-5 h-5 mr-2" />
-                    Request Quote
+                <Button variant="industrial" size="lg" className="flex-1 h-16 text-sm font-black">
+                    <MessageSquare className="w-4 h-4 mr-3" />
+                    TRANSMISSION QUOTE
                 </Button>
             </div>
         </div>

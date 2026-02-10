@@ -21,61 +21,67 @@ export const ProductCard = memo(({ product }: ProductCardProps) => {
     return (
         <motion.div
             layout
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.9 }}
-            className="group relative"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 20 }}
+            className="group relative h-full"
         >
-            <div className="glass-card rounded-2xl overflow-hidden h-full hover-lift">
-                {/* Product Image */}
-                <div className="relative aspect-square overflow-hidden">
+            <div className="glass-stage rounded-2xl overflow-hidden h-full flex flex-col industrial-border hover-ember">
+                {/* Product Staging Area */}
+                <div className="relative aspect-square overflow-hidden bg-graphite-900/50 flex items-center justify-center p-4">
                     <img
                         src={product.image}
                         alt={product.name}
-                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                        className="w-full h-full object-contain transition-transform duration-700 group-hover:scale-105"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
-                    {/* 3D Badge */}
+                    {/* Visual Overlays */}
+                    <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-graphite-950/60 to-transparent" />
+
+                    {/* 3D Indicator Toggle */}
                     {product.has3D && (
-                        <motion.div
-                            className="absolute bottom-3 right-3 bg-red-600 text-white text-[10px] font-bold px-2 py-1 rounded-lg flex items-center gap-1 shadow-lg"
-                            animate={{ y: [0, -4, 0] }}
-                            transition={{ duration: 2, repeat: Infinity }}
-                        >
-                            <Box className="w-3 h-3" />
-                            VIEW IN 3D
-                        </motion.div>
+                        <div className="absolute bottom-4 right-4">
+                            <motion.div
+                                className="bg-primary/20 backdrop-blur-xl border border-primary/30 text-primary text-[10px] font-black tracking-widest px-3 py-1.5 rounded-lg flex items-center gap-2 shadow-2xl shadow-primary/20"
+                                animate={{ opacity: [0.7, 1, 0.7] }}
+                                transition={{ duration: 3, repeat: Infinity }}
+                            >
+                                <Box className="w-3.5 h-3.5" />
+                                3D ENABLED
+                            </motion.div>
+                        </div>
                     )}
 
-                    {/* Stock Badge */}
-                    <div className="absolute top-3 left-3">
+                    {/* Stock Intensity */}
+                    <div className="absolute top-4 left-4">
                         <Badge variant={
-                            product.stockStatus === "In Stock" ? "auto-success" :
-                                product.stockStatus === "Low Stock" ? "auto-warning" : "auto-danger"
-                        } className="backdrop-blur-md">
+                            product.stockStatus === "In Stock" ? "success" :
+                                product.stockStatus === "Low Stock" ? "warning" : "destructive"
+                        } className="font-black tracking-widest text-[10px] uppercase px-3 py-1 scale-90 origin-left">
                             {product.stockStatus}
                         </Badge>
                     </div>
                 </div>
 
-                {/* Product Info */}
-                <div className="p-5">
-                    <div className="text-zinc-400 text-xs mb-1 uppercase tracking-wider font-semibold">
-                        {product.compatibility[0]} Compatible
+                {/* Product Metadata */}
+                <div className="p-6 flex flex-col flex-grow">
+                    <div className="text-zinc-500 text-[10px] mb-2 uppercase tracking-[0.2em] font-black">
+                        {product.compatibility[0]} Systems
                     </div>
-                    <h3 className="text-white font-bold mb-3 group-hover:text-red-400 transition-colors line-clamp-1">
+                    <h3 className="text-white font-bold mb-4 group-hover:text-primary transition-colors line-clamp-2 min-h-[3rem] text-lg leading-tight uppercase tracking-tight font-heading">
                         {product.name}
                     </h3>
 
-                    <div className="flex items-center justify-between mt-auto">
-                        <span className="text-xl font-bold text-white">
-                            ${product.price.toLocaleString()}
-                        </span>
+                    <div className="mt-auto pt-4 border-t border-white/5 flex items-center justify-between">
+                        <div className="flex flex-col">
+                            <span className="text-[10px] text-zinc-500 font-bold uppercase tracking-widest">Base Value</span>
+                            <span className="text-2xl font-black text-white font-heading">
+                                ${product.price.toLocaleString()}
+                            </span>
+                        </div>
                         <Link to={`/products/${product.id}`}>
-                            <Button size="sm" variant="auto-secondary" className="group/btn">
-                                Details
-                                <ChevronRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
+                            <Button size="icon" variant="industrial" className="group/btn rounded-2xl">
+                                <ChevronRight className="w-5 h-5 group-hover/btn:translate-x-1 transition-transform" />
                             </Button>
                         </Link>
                     </div>
