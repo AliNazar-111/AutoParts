@@ -89,11 +89,11 @@ export default function ProductDetails() {
       {/* Background Ambience */}
       <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_50%_0%,var(--primary-glow)_0%,transparent_50%)] opacity-5 pointer-events-none" />
 
-      <div className="container mx-auto px-6 relative z-10">
-        <div className="mb-12 flex items-center justify-between">
+      <div className="container mx-auto px-4 md:px-6 relative z-10">
+        <div className="mb-8 md:mb-12 flex flex-col md:flex-row md:items-center justify-between gap-4">
           <Link
             to="/products"
-            className="inline-flex items-center gap-3 text-zinc-600 hover:text-white transition-all group font-bold uppercase tracking-widest text-[10px]"
+            className="inline-flex items-center gap-3 text-zinc-600 hover:text-white transition-all group font-bold uppercase tracking-widest text-xs"
           >
             <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center border border-white/5 group-hover:border-primary/30 transition-all">
               <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
@@ -101,24 +101,24 @@ export default function ProductDetails() {
             Catalog Protocol
           </Link>
 
-          <div className="hidden md:flex items-center gap-4 px-4 py-2 rounded-full border border-white/5 bg-white/2">
+          <div className="flex items-center gap-4 px-4 py-2 rounded-full border border-white/5 bg-white/2 w-fit">
             <ShieldCheck className="w-3.5 h-3.5 text-primary" />
             <span className="text-[9px] text-zinc-500 font-black uppercase tracking-widest">Verified Component v2.4.0</span>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 md:gap-16 lg:gap-24 items-start">
           {/* Visual Staging Area */}
-          <div className="space-y-8 sticky top-32">
+          <div className="space-y-6 md:space-y-8 lg:sticky lg:top-32">
             <div className="relative group">
-              <div className="glass-stage rounded-[2.5rem] p-4 industrial-border overflow-hidden shadow-premium">
-                <div className="relative aspect-[4/3] rounded-[2rem] overflow-hidden bg-graphite-900/50 group/stage">
+              <div className="glass-stage rounded-3xl md:rounded-[2.5rem] p-3 md:p-4 industrial-border overflow-hidden shadow-premium">
+                <div className="relative aspect-square md:aspect-[4/3] rounded-2xl md:rounded-[2rem] overflow-hidden bg-graphite-900/50 group/stage">
                   <AnimatePresence mode="wait">
                     <motion.img
                       key={selectedImage}
                       src={images[selectedImage]}
                       alt={product.name}
-                      className="w-full h-full object-contain p-12 transition-transform duration-700"
+                      className="w-full h-full object-contain p-6 md:p-12 transition-transform duration-700"
                       initial={{ opacity: 0, scale: 0.9 }}
                       animate={{ opacity: 1, scale: 1 }}
                       exit={{ opacity: 0, scale: 1.1 }}
@@ -127,20 +127,20 @@ export default function ProductDetails() {
                   </AnimatePresence>
 
                   {/* Digital Overlays */}
-                  <div className="absolute inset-0 pointer-events-none border border-white/5 rounded-[2rem]" />
-                  <div className="absolute top-6 left-6 flex flex-col gap-2">
+                  <div className="absolute inset-0 pointer-events-none border border-white/5 rounded-2xl md:rounded-[2rem]" />
+                  <div className="absolute top-4 md:top-6 left-4 md:left-6 flex flex-col gap-2">
                     <div className="w-1.5 h-1.5 rounded-full bg-primary shadow-[0_0_10px_var(--ember-glow)] animate-pulse" />
                     <div className="w-1.5 h-1.5 rounded-full bg-white/10" />
                     <div className="w-1.5 h-1.5 rounded-full bg-white/10" />
                   </div>
 
                   {images.length > 1 && (
-                    <div className="absolute inset-x-6 top-1/2 -translate-y-1/2 flex justify-between opacity-0 group-hover/stage:opacity-100 transition-opacity">
+                    <div className="absolute inset-x-4 md:inset-x-6 top-1/2 -translate-y-1/2 flex justify-between opacity-0 group-hover/stage:opacity-100 transition-opacity">
                       <Button
                         variant="industrial"
                         size="icon"
                         onClick={() => setSelectedImage((prev) => (prev - 1 + images.length) % images.length)}
-                        className="rounded-full shadow-2xl"
+                        className="w-10 h-10 md:w-12 md:h-12 rounded-full shadow-2xl"
                       >
                         <ChevronLeft className="w-5 h-5" />
                       </Button>
@@ -148,7 +148,7 @@ export default function ProductDetails() {
                         variant="industrial"
                         size="icon"
                         onClick={() => setSelectedImage((prev) => (prev + 1) % images.length)}
-                        className="rounded-full shadow-2xl"
+                        className="w-10 h-10 md:w-12 md:h-12 rounded-full shadow-2xl"
                       >
                         <ChevronRight className="w-5 h-5" />
                       </Button>
@@ -158,7 +158,7 @@ export default function ProductDetails() {
                   {product.has3D && (
                     <motion.button
                       onClick={() => setShow3D(true)}
-                      className="absolute bottom-8 right-8 z-10 bg-primary text-white font-black text-[10px] tracking-[0.2em] py-3.5 px-6 rounded-2xl flex items-center gap-3 shadow-2xl shadow-primary/30 hover:bg-primary/90 transition-all uppercase"
+                      className="absolute bottom-4 md:bottom-8 right-4 md:right-8 z-10 bg-primary text-white font-black text-[9px] md:text-[10px] tracking-[0.2em] py-3 md:py-3.5 px-4 md:px-6 rounded-xl md:rounded-2xl flex items-center gap-2 md:gap-3 shadow-2xl shadow-primary/30 hover:bg-primary/90 transition-all uppercase"
                       whileHover={{ y: -4 }}
                       whileTap={{ scale: 0.95 }}
                     >
@@ -170,12 +170,12 @@ export default function ProductDetails() {
               </div>
             </div>
 
-            <div className="flex gap-4 justify-center">
+            <div className="flex gap-3 md:gap-4 overflow-x-auto pb-4 md:pb-0 no-scrollbar justify-start md:justify-center">
               {images.map((img, idx) => (
                 <button
                   key={idx}
                   onClick={() => setSelectedImage(idx)}
-                  className={`relative w-24 h-24 rounded-2xl overflow-hidden border-2 transition-all p-3 bg-white/2 ${selectedImage === idx ? "border-primary shadow-lg shadow-primary/10 scale-105" : "border-white/5 opacity-50 hover:opacity-100"}`}
+                  className={`relative w-20 h-20 md:w-24 md:h-24 rounded-xl md:rounded-2xl overflow-hidden border-2 transition-all p-2 md:p-3 bg-white/2 shrink-0 ${selectedImage === idx ? "border-primary shadow-lg shadow-primary/10 scale-105" : "border-white/5 opacity-50 hover:opacity-100"}`}
                 >
                   <img src={img} className="w-full h-full object-contain" alt={`Thumbnail ${idx + 1}`} />
                 </button>
@@ -200,8 +200,8 @@ export default function ProductDetails() {
             <ProductInfo product={product} />
 
             {/* Technical Parameters Matrix */}
-            <div className="glass-stage rounded-[2.5rem] overflow-hidden border border-white/5">
-              <div className="flex border-b border-white/5 bg-white/2">
+            <div className="glass-stage rounded-3xl md:rounded-[2.5rem] overflow-hidden border border-white/5">
+              <div className="flex border-b border-white/5 bg-white/2 overflow-x-auto no-scrollbar">
                 {[
                   { id: 'specs', label: 'Tech Specs' },
                   { id: 'compatibility', label: 'Unit Compatibility' },
@@ -209,7 +209,7 @@ export default function ProductDetails() {
                   <button
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id as any)}
-                    className={`flex-1 py-6 text-[10px] font-black uppercase tracking-[0.2em] transition-all relative ${activeTab === tab.id ? "text-white bg-white/5" : "text-zinc-500 hover:text-zinc-300"}`}
+                    className={`flex-1 min-w-[150px] py-5 md:py-6 text-xs font-black uppercase tracking-[0.2em] transition-all relative ${activeTab === tab.id ? "text-white bg-white/5" : "text-zinc-500 hover:text-zinc-300"}`}
                   >
                     <div className="flex items-center justify-center gap-3">
                       {tab.id === 'specs' ? <Fingerprint className="w-3.5 h-3.5" /> : <ShieldCheck className="w-3.5 h-3.5" />}
@@ -218,14 +218,14 @@ export default function ProductDetails() {
                     {activeTab === tab.id && (
                       <motion.div
                         layoutId="activeTabUnderline"
-                        className="absolute bottom-0 left-8 right-8 h-[2px] bg-primary rounded-full shadow-[0_0_10px_var(--ember-glow)]"
+                        className="absolute bottom-0 left-4 right-4 md:left-8 md:right-8 h-[2px] bg-primary rounded-full shadow-[0_0_10px_var(--ember-glow)]"
                       />
                     )}
                   </button>
                 ))}
               </div>
 
-              <div className="p-10">
+              <div className="p-6 md:p-10">
                 <AnimatePresence mode="wait">
                   {activeTab === "specs" ? (
                     <motion.div

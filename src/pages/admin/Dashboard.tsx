@@ -34,6 +34,7 @@ export default function Dashboard() {
   const [activeTab, setActiveTab] = useState<TabType>("overview");
   const [showAddProduct, setShowAddProduct] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const inquiries = [
     { id: "1", customerName: "John Smith", email: "john@example.com", product: "Brembo GT Series Brakes", date: "Jan 20, 2026", status: "New" },
@@ -55,28 +56,51 @@ export default function Dashboard() {
   );
 
   return (
-    <div className="min-h-screen bg-graphite-950 flex font-sans selection:bg-primary/30 overflow-hidden">
+    <div className="flex-1 flex flex-col min-w-0 h-screen overflow-hidden">
       <AdminSidebar
         activeTab={activeTab}
-        onTabChange={setActiveTab}
+        onTabChange={(tab) => {
+          setActiveTab(tab);
+          setIsSidebarOpen(false);
+        }}
         inquiriesCount={inquiries.filter(i => i.status === "New").length}
+        isOpen={isSidebarOpen}
+        onClose={() => setIsSidebarOpen(false)}
       />
 
+      {/* Mobile Management Header */}
+      <header className="lg:hidden h-20 bg-graphite-950 border-b border-white/5 px-6 flex items-center justify-between shrink-0 relative z-50">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 bg-primary/20 rounded-xl flex items-center justify-center border border-primary/30">
+            <Cpu className="w-6 h-6 text-primary" />
+          </div>
+          <div className="text-lg font-black font-heading text-white uppercase tracking-tighter">
+            Pro <span className="text-primary">Admin</span>
+          </div>
+        </div>
+        <button
+          onClick={() => setIsSidebarOpen(true)}
+          className="w-12 h-12 rounded-xl bg-white/5 border border-white/5 flex items-center justify-center text-white"
+        >
+          <Activity className="w-5 h-5 text-primary" />
+        </button>
+      </header>
+
       {/* Main Content Stage */}
-      <main className="flex-1 p-12 overflow-auto relative">
+      <main className="flex-1 p-6 md:p-12 overflow-y-auto relative no-scrollbar">
         {/* Background Ambience */}
         <div className="absolute top-0 right-0 w-full h-full bg-[radial-gradient(circle_at_70%_0%,var(--primary-glow)_0%,transparent_50%)] opacity-[0.03] pointer-events-none" />
 
-        <header className="flex justify-between items-end mb-16 relative z-10">
+        <header className="flex flex-col md:flex-row md:items-end justify-between mb-10 md:mb-16 gap-6 relative z-10">
           <div>
             <div className="flex items-center gap-2 mb-3">
               <Database className="w-3.5 h-3.5 text-primary" />
               <span className="text-[10px] font-black uppercase tracking-[0.4em] text-zinc-600">Administrative Node</span>
             </div>
-            <h1 className="text-5xl font-black text-white tracking-tighter uppercase font-heading leading-none">{activeTab}</h1>
+            <h1 className="text-3xl md:text-5xl font-black text-white tracking-tighter uppercase font-heading leading-none">{activeTab}</h1>
           </div>
-          <div className="flex items-center gap-6">
-            <div className="flex items-center gap-8 px-8 py-4 rounded-2xl bg-white/2 border border-white/5 shadow-2xl">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 md:gap-6">
+            <div className="flex items-center gap-6 md:gap-8 px-6 md:px-8 py-3 md:py-4 rounded-2xl bg-white/2 border border-white/5 shadow-2xl w-full sm:w-auto">
               <div className="flex flex-col">
                 <span className="text-[9px] font-black uppercase tracking-widest text-zinc-600 mb-1">Grid Status</span>
                 <div className="flex items-center gap-2">
@@ -84,7 +108,7 @@ export default function Dashboard() {
                   <span className="text-[10px] font-bold text-white uppercase tracking-widest leading-none">Live Operational</span>
                 </div>
               </div>
-              <div className="flex flex-col">
+              <div className="flex flex-col border-l border-white/5 pl-6 md:pl-8">
                 <span className="text-[9px] font-black uppercase tracking-widest text-zinc-600 mb-1">Transmission</span>
                 <div className="flex items-center gap-2">
                   <Zap className="w-3 h-3 text-primary" />
@@ -99,20 +123,20 @@ export default function Dashboard() {
           {activeTab === "overview" && (
             <motion.div key="overview" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="space-y-12 relative z-10">
               {/* Telemetry Grid */}
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
                 {stats.map((stat, idx) => (
-                  <div key={idx} className="glass-stage rounded-3xl p-8 border border-white/5 relative overflow-hidden group hover:border-primary/20 transition-all cursor-default">
+                  <div key={idx} className="glass-stage rounded-3xl p-6 md:p-8 border border-white/5 relative overflow-hidden group hover:border-primary/20 transition-all cursor-default">
                     <div className="absolute -top-4 -right-4 p-4 opacity-5 group-hover:scale-125 transition-transform duration-700">
                       <stat.icon className="w-24 h-24" />
                     </div>
                     <div className="flex items-center gap-4 mb-6">
-                      <div className="p-3.5 rounded-2xl bg-white/2 border border-white/5 text-zinc-500 group-hover:text-primary transition-colors">
+                      <div className="p-3 rounded-2xl bg-white/2 border border-white/5 text-zinc-500 group-hover:text-primary transition-colors">
                         <stat.icon className="w-5 h-5" />
                       </div>
                       <span className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-600">{stat.label}</span>
                     </div>
                     <div className="flex items-end justify-between">
-                      <div className="text-4xl font-black text-white font-heading tracking-tighter">{stat.value}</div>
+                      <div className="text-3xl md:text-4xl font-black text-white font-heading tracking-tighter">{stat.value}</div>
                       <div className={`flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest ${stat.up ? 'text-primary' : 'text-zinc-600'}`}>
                         {stat.up ? <ArrowUpRight className="w-3.5 h-3.5" /> : <ArrowDownRight className="w-3.5 h-3.5" />}
                         {stat.trend}
@@ -212,8 +236,8 @@ export default function Dashboard() {
                 </Button>
               </div>
 
-              <div className="glass-stage rounded-[2.5rem] overflow-hidden border border-white/5 shadow-2xl">
-                <table className="w-full text-left">
+              <div className="glass-stage rounded-[2.5rem] border border-white/5 shadow-2xl overflow-x-auto no-scrollbar">
+                <table className="w-full text-left min-w-[1000px]">
                   <thead className="bg-white/2 border-b border-white/5">
                     <tr>
                       <th className="p-8 text-[10px] font-black uppercase tracking-[0.3em] text-zinc-600">Part Telemetry</th>
@@ -265,8 +289,8 @@ export default function Dashboard() {
                         <td className="p-8 font-black font-heading text-white tracking-tighter text-lg">${product.price.toLocaleString()}</td>
                         <td className="p-8 text-right">
                           <div className="flex justify-end gap-3 opacity-0 group-hover:opacity-100 transition-all translate-x-4 group-hover:translate-x-0">
-                            <button className="w-10 h-10 bg-white/5 hover:bg-white/10 border border-white/10 text-white rounded-xl flex items-center justify-center transition-all"><Edit className="w-4 h-4" /></button>
-                            <button className="w-10 h-10 bg-white/5 hover:bg-primary/20 border border-white/10 text-zinc-500 hover:text-primary rounded-xl flex items-center justify-center transition-all"><Trash2 className="w-4 h-4" /></button>
+                            <button className="w-11 h-11 bg-white/5 hover:bg-white/10 border border-white/10 text-white rounded-xl flex items-center justify-center transition-all"><Edit className="w-4 h-4" /></button>
+                            <button className="w-11 h-11 bg-white/5 hover:bg-primary/20 border border-white/10 text-zinc-500 hover:text-primary rounded-xl flex items-center justify-center transition-all"><Trash2 className="w-4 h-4" /></button>
                           </div>
                         </td>
                       </tr>

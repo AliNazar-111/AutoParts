@@ -32,7 +32,7 @@ export const ProductCard = memo(({ product }: ProductCardProps) => {
                     <img
                         src={product.image}
                         alt={product.name}
-                        className="w-full h-full object-contain transition-transform duration-700 group-hover:scale-105"
+                        className="w-full h-full object-cover rounded-2xl transition-transform duration-700 group-hover:scale-105"
                     />
 
                     {/* Visual Overlays */}
@@ -42,7 +42,7 @@ export const ProductCard = memo(({ product }: ProductCardProps) => {
                     {product.has3D && (
                         <div className="absolute bottom-4 right-4">
                             <motion.div
-                                className="bg-primary/20 backdrop-blur-xl border border-primary/30 text-primary text-[10px] font-black tracking-widest px-3 py-1.5 rounded-lg flex items-center gap-2 shadow-2xl shadow-primary/20"
+                                className="bg-primary/20 backdrop-blur-xl border border-primary/30 text-primary text-xs font-black tracking-widest px-3 py-1.5 rounded-lg flex items-center gap-2 shadow-2xl shadow-primary/20"
                                 animate={{ opacity: [0.7, 1, 0.7] }}
                                 transition={{ duration: 3, repeat: Infinity }}
                             >
@@ -57,7 +57,7 @@ export const ProductCard = memo(({ product }: ProductCardProps) => {
                         <Badge variant={
                             product.stockStatus === "In Stock" ? "success" :
                                 product.stockStatus === "Low Stock" ? "warning" : "destructive"
-                        } className="font-black tracking-widest text-[10px] uppercase px-3 py-1 scale-90 origin-left">
+                        } className="font-black tracking-widest text-xs uppercase px-3 py-1 scale-90 origin-left">
                             {product.stockStatus}
                         </Badge>
                     </div>
@@ -65,7 +65,7 @@ export const ProductCard = memo(({ product }: ProductCardProps) => {
 
                 {/* Product Metadata */}
                 <div className="p-6 flex flex-col flex-grow">
-                    <div className="text-zinc-500 text-[10px] mb-2 uppercase tracking-[0.2em] font-black">
+                    <div className="text-zinc-500 text-xs mb-2 uppercase tracking-[0.2em] font-black">
                         {product.compatibility[0]} Systems
                     </div>
                     <h3 className="text-white font-bold mb-4 group-hover:text-primary transition-colors line-clamp-2 min-h-[3rem] text-lg leading-tight uppercase tracking-tight font-heading">
@@ -74,7 +74,7 @@ export const ProductCard = memo(({ product }: ProductCardProps) => {
 
                     <div className="mt-auto pt-4 border-t border-white/5 flex items-center justify-between">
                         <div className="flex flex-col">
-                            <span className="text-[10px] text-zinc-500 font-bold uppercase tracking-widest">Base Value</span>
+                            <span className="text-xs text-zinc-500 font-bold uppercase tracking-widest">Base Value</span>
                             <span className="text-2xl font-black text-white font-heading">
                                 ${product.price.toLocaleString()}
                             </span>

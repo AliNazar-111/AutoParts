@@ -46,20 +46,20 @@ export default function Header() {
         <div className="container mx-auto px-6">
           <div className="flex items-center justify-between">
             {/* Logo */}
-            <Link to="/" className="flex items-center gap-4 group">
+            <Link to="/" className="flex items-center gap-3 md:gap-4 group py-2">
               <motion.div
                 className="relative"
                 whileHover={{ rotate: 90 }}
                 transition={{ type: "spring", stiffness: 200 }}
               >
                 <div className="absolute inset-0 bg-primary/20 blur-xl rounded-full" />
-                <Settings className="w-10 h-10 text-primary relative z-10" />
+                <Settings className="w-8 h-8 md:w-10 md:h-10 text-primary relative z-10" />
               </motion.div>
               <div className="flex flex-col">
-                <div className="text-xl font-black font-heading tracking-tighter text-white group-hover:text-primary transition-colors leading-none uppercase">
+                <div className="text-lg md:text-xl font-black font-heading tracking-tighter text-white group-hover:text-primary transition-colors leading-none uppercase">
                   AutoPart <span className="text-primary">Pro</span>
                 </div>
-                <div className="text-[10px] text-zinc-500 mt-1 uppercase tracking-[0.2em] font-medium">Precision Management</div>
+                <div className="text-[9px] md:text-[10px] text-zinc-500 mt-0.5 md:mt-1 uppercase tracking-[0.2em] font-medium">Precision Management</div>
               </div>
             </Link>
 
@@ -86,7 +86,7 @@ export default function Header() {
               ))}
             </nav>
 
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2 md:gap-4">
               {/* Contact Button - Desktop */}
               <Link
                 to="/contact"
@@ -99,12 +99,13 @@ export default function Header() {
               {/* Mobile Menu Toggle */}
               <button
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className="md:hidden p-3 rounded-xl bg-graphite-800 hover:bg-graphite-700 border border-white/5 transition-colors"
+                className="md:hidden w-12 h-12 flex items-center justify-center rounded-xl bg-graphite-800 hover:bg-graphite-700 border border-white/5 transition-colors focus:ring-2 focus:ring-primary/40 outline-none"
+                aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
               >
                 {isMobileMenuOpen ? (
-                  <X className="w-5 h-5 text-white" />
+                  <X className="w-6 h-6 text-white" />
                 ) : (
-                  <Menu className="w-5 h-5 text-white" />
+                  <Menu className="w-6 h-6 text-white" />
                 )}
               </button>
             </div>
@@ -130,48 +131,50 @@ export default function Header() {
             />
 
             <motion.div
-              className="absolute top-0 right-0 w-full max-w-sm h-full bg-graphite-950 border-l border-white/5 p-8 pt-32"
+              className="absolute top-0 right-0 w-full max-w-[85vw] h-full bg-graphite-950 border-l border-white/5 p-6 md:p-10 pt-28"
               initial={{ x: "100%" }}
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
               transition={{ type: "spring", damping: 30, stiffness: 200 }}
             >
-              <nav className="space-y-4">
-                {navLinks.map((link, idx) => (
-                  <motion.div
-                    key={link.path}
-                    initial={{ opacity: 0, x: 20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: idx * 0.1 }}
-                  >
-                    <Link
-                      to={link.path}
-                      className={`flex items-center justify-between p-5 rounded-2xl border transition-all ${isActive(link.path)
-                        ? "bg-primary/10 border-primary/20 text-white"
-                        : "text-zinc-400 border-white/5 hover:bg-white/5"
-                        }`}
+              <div className="flex flex-col h-full">
+                <nav className="space-y-3">
+                  {navLinks.map((link, idx) => (
+                    <motion.div
+                      key={link.path}
+                      initial={{ opacity: 0, x: 20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: idx * 0.1 }}
                     >
-                      <span className="font-bold tracking-tight">{link.label}</span>
-                      <ChevronRight className={`w-5 h-5 ${isActive(link.path) ? "text-primary" : "text-zinc-600"}`} />
-                    </Link>
-                  </motion.div>
-                ))}
-              </nav>
+                      <Link
+                        to={link.path}
+                        className={`flex items-center justify-between h-16 px-6 rounded-2xl border transition-all ${isActive(link.path)
+                          ? "bg-primary/10 border-primary/20 text-white"
+                          : "text-zinc-400 border-white/5 hover:bg-white/5 hover:text-white"
+                          }`}
+                      >
+                        <span className="font-bold tracking-tight uppercase text-xs">{link.label}</span>
+                        <ChevronRight className={`w-5 h-5 ${isActive(link.path) ? "text-primary" : "text-zinc-600"}`} />
+                      </Link>
+                    </motion.div>
+                  ))}
+                </nav>
 
-              <motion.div
-                className="mt-12"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.4 }}
-              >
-                <Link
-                  to="/contact"
-                  className="btn-ember w-full py-5 text-sm"
+                <motion.div
+                  className="mt-auto pb-10"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.4 }}
                 >
-                  <Phone className="w-5 h-5" />
-                  REQUEST QUOTE
-                </Link>
-              </motion.div>
+                  <Link
+                    to="/contact"
+                    className="btn-ember w-full h-16 text-[10px] font-black tracking-[0.2em]"
+                  >
+                    <Phone className="w-5 h-5" />
+                    REQUEST QUOTE
+                  </Link>
+                </motion.div>
+              </div>
             </motion.div>
           </motion.div>
         )}

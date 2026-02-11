@@ -49,7 +49,7 @@ export default function Home() {
       {/* Precision Hero Stage */}
       <section className="relative min-h-[95vh] flex items-center overflow-hidden border-b border-white/5">
         <IndustrialGrid />
-        <ScanningBeam />
+        {/* <ScanningBeam /> */}
         <div className="absolute top-0 right-0 w-1/2 h-full bg-[radial-gradient(circle_at_center,var(--primary-glow)_0%,transparent_70%)] opacity-20 pointer-events-none" />
 
         <div className="container mx-auto px-6 relative z-10">
@@ -59,12 +59,12 @@ export default function Home() {
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8, ease: "easeOut" }}
             >
-              <div className="inline-flex items-center gap-3 px-4 py-2 rounded-full border border-primary/20 bg-primary/5 mb-8">
+              {/* <div className="inline-flex items-center gap-3 px-4 py-2 rounded-full border border-primary/20 bg-primary/5 mb-8">
                 <Cpu className="w-4 h-4 text-primary" />
                 <span className="text-[10px] font-black uppercase tracking-[0.3em] text-primary">Systems Integration v4.0 Active</span>
-              </div>
+              </div> */}
 
-              <h1 className="text-6xl md:text-8xl font-black mb-8 leading-[0.9] font-heading uppercase tracking-tighter">
+              <h1 className="text-6xl md:text-8xl font-black mb-8 leading-[0.9] font-heading uppercase ">
                 <span className="text-white block">Engineered</span>
                 <span className="text-primary block">Excellence</span>
                 <span className="text-white/40 block text-4xl md:text-5xl mt-4">In Every Component.</span>
@@ -95,8 +95,8 @@ export default function Home() {
                   { label: "Global Delivery", value: "24h" },
                 ].map((stat, i) => (
                   <div key={i}>
-                    <div className="text-2xl font-black text-white font-heading">{stat.value}</div>
-                    <div className="text-[10px] text-zinc-600 font-bold uppercase tracking-widest mt-1">{stat.label}</div>
+                    <div className="text-2xl font-black text-white font-heading">{stat.value} </div>
+                    <div className="text-[10px] text-zinc-600 font-bold uppercase tracking-widest mb-6">{stat.label}</div>
                   </div>
                 ))}
               </div>
@@ -111,7 +111,7 @@ export default function Home() {
               <div className="relative z-10 p-4 bg-white/5 backdrop-blur-3xl rounded-[2.5rem] border border-white/10 shadow-premium group">
                 <div className="absolute -inset-10 bg-primary/10 blur-[100px] rounded-full group-hover:bg-primary/20 transition-all duration-1000" />
                 <div className="relative aspect-square rounded-[2rem] overflow-hidden industrial-border overflow-hidden">
-                  <img className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 scale-110 group-hover:scale-100" src="https://i.ytimg.com/vi/zkkNLx9I6Vo/maxresdefault.jpg" alt="Precision Component Visualization" />
+                  <img className="w-full h-full object-cover grayscale grayscale-0 transition-all duration-700 scale-110 scale-100" src="https://i.ytimg.com/vi/zkkNLx9I6Vo/maxresdefault.jpg" alt="Precision Component Visualization" />
                   <div className="absolute inset-x-0 bottom-0 p-8 bg-gradient-to-t from-graphite-950/90 to-transparent">
                     <div className="flex items-center gap-4">
                       <div className="w-12 h-12 rounded-2xl bg-primary/20 backdrop-blur-xl border border-primary/30 flex items-center justify-center text-primary">
