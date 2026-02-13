@@ -5,6 +5,24 @@ const AppError = require('../utils/appError');
 
 // GET all products (Public)
 exports.getAllProducts = catchAsync(async (req, res, next) => {
+    // 1. Resolve category slug to ID if necessary
+    const queryCopy = { ...req.query };
+    if (queryCopy.category && !queryCopy.category.match(/^[0-9a-fA-F]{24}$/)) {
+        const Category = require('../models/categoryModel');
+        const category = await Category.findOne({ slug: queryCopy.category.toLowerCase() });
+        if (category) {
+            queryCopy.category = category._id;
+        } else {
+            // If category not found by slug, return empty results early
+            return res.status(200).json({
+                status: 'success',
+                results: 0,
+                total: 0,
+                data: { products: [] }
+            });
+        }
+    }
+
     // List-view projection: Only fetch what's needed for the product cards
     const projection = 'name price imageUrl stockStatus category compatibility featured model3D';
 
@@ -12,7 +30,7 @@ exports.getAllProducts = catchAsync(async (req, res, next) => {
         Product.find({ active: { $ne: false } })
             .populate('category', 'name')
             .lean(),
-        req.query
+        queryCopy
     )
         .search()
         .filter()
@@ -24,15 +42,15 @@ exports.getAllProducts = catchAsync(async (req, res, next) => {
     const [products, total] = await Promise.all([
         features.query.select(projection),
         Product.countDocuments(
-            new APIFeatures(Product.find({ active: { $ne: false } }), req.query)
+            new APIFeatures(Product.find({ active: { $ne: false } }), queryCopy)
                 .search()
                 .filter()
                 .query.getFilter()
         )
     ]);
 
-    const page = req.query.page * 1 || 1;
-    const limit = req.query.limit * 1 || 10;
+    const page = queryCopy.page * 1 || 1;
+    const limit = queryCopy.limit * 1 || 10;
 
     res.status(200).json({
         status: 'success',

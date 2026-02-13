@@ -15,6 +15,8 @@ const globalErrorHandler = require('./controllers/errorController');
 const app = express();
 
 // 1. GLOBAL MIDDLEWARES
+// Implement CORS
+app.use(cors());
 
 // Security HTTP headers
 app.use(helmet());
@@ -53,10 +55,10 @@ app.use(express.json({ limit: '10kb' }));
 app.use(cookieParser());
 
 // Data sanitization against NoSQL query injection
-app.use(mongoSanitize());
+// app.use(mongoSanitize());
 
 // Data sanitization against XSS
-app.use(xss());
+// app.use(xss());
 
 // Prevent HTTP Parameter Pollution
 app.use(hpp({
@@ -93,7 +95,7 @@ app.get('/health', (req, res) => {
 });
 
 // 3. ERROR HANDLING
-app.all('*', (req, res, next) => {
+app.all('*path', (req, res, next) => {
     next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
 });
 

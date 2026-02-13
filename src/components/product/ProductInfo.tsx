@@ -13,7 +13,7 @@ export function ProductInfo({ product }: ProductInfoProps) {
                 <div className="flex flex-wrap items-center gap-4 mb-6">
                     <div className="flex items-center gap-2 px-3 py-1 rounded-lg bg-white/5 border border-white/10">
                         <Zap className="w-3 h-3 text-primary animate-pulse" />
-                        <span className="text-[10px] font-black text-zinc-400 uppercase tracking-widest">Part #{product.partNumber}</span>
+                        <span className="text-[10px] font-black text-zinc-400 uppercase tracking-widest">Part #{product.sku || product.partNumber}</span>
                     </div>
                     <Badge variant={product.stockStatus === "In Stock" ? "success" : "warning"}>
                         {product.stockStatus}

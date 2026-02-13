@@ -59,6 +59,7 @@
     "react-router": "^7.12.0",
     "react-slick": "0.31.0",
     "recharts": "2.15.2",
+    "schema-seed": "^0.1.15",
     "sonner": "2.0.3",
     "tailwind-merge": "3.2.0",
     "tw-animate-css": "1.3.8",
@@ -69,6 +70,7 @@
     "@types/react": "^19.2.9",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "4.7.0",
+    "schema-seed-adapter-mongodb": "^0.1.11",
     "tailwindcss": "4.1.12",
     "typescript": "^5.9.3",
     "vite": "6.3.5"

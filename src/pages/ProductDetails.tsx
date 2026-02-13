@@ -82,7 +82,8 @@ export default function ProductDetails() {
     );
   }
 
-  const images = [product.image, product.image, product.image];
+  const displayImage = product.imageUrl || product.image;
+  const images = [displayImage, displayImage, displayImage];
 
   return (
     <div className="min-h-screen bg-graphite-950 pt-32 pb-24 overflow-hidden">
@@ -155,7 +156,7 @@ export default function ProductDetails() {
                     </div>
                   )}
 
-                  {product.has3D && (
+                  {!!product.model3D && (
                     <motion.button
                       onClick={() => setShow3D(true)}
                       className="absolute bottom-4 md:bottom-8 right-4 md:right-8 z-10 bg-primary text-white font-black text-[9px] md:text-[10px] tracking-[0.2em] py-3 md:py-3.5 px-4 md:px-6 rounded-xl md:rounded-2xl flex items-center gap-2 md:gap-3 shadow-2xl shadow-primary/30 hover:bg-primary/90 transition-all uppercase"
@@ -250,12 +251,14 @@ export default function ProductDetails() {
                       exit={{ opacity: 0, x: -10 }}
                       className="grid grid-cols-1 md:grid-cols-2 gap-6"
                     >
-                      {product.compatibility.map((vehicle, idx) => (
+                      {product.compatibility.map((vehicle: any, idx: number) => (
                         <div key={idx} className="flex items-center gap-4 p-5 bg-white/2 rounded-[1.25rem] border border-white/5 hover:border-green-500/20 transition-all group">
                           <div className="w-10 h-10 bg-green-500/10 rounded-xl flex items-center justify-center border border-green-500/10">
                             <CheckCircle className="w-5 h-5 text-green-500" />
                           </div>
-                          <span className="text-[11px] font-black uppercase tracking-widest text-zinc-400 group-hover:text-white transition-colors">{vehicle}</span>
+                          <span className="text-[11px] font-black uppercase tracking-widest text-zinc-400 group-hover:text-white transition-colors">
+                            {typeof vehicle === 'string' ? vehicle : `${vehicle.make} ${vehicle.model} (${vehicle.yearStart}-${vehicle.yearEnd})`}
+                          </span>
                         </div>
                       ))}
                     </motion.div>

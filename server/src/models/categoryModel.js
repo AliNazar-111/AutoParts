@@ -41,9 +41,10 @@ categorySchema.virtual('subcategories', {
 });
 
 // Document Middleware: runs before .save() and .create()
-categorySchema.pre('save', function (next) {
-    this.slug = slugify(this.name, { lower: true });
-    next();
+categorySchema.pre('save', function () {
+    if (this.isModified('name')) {
+        this.slug = slugify(this.name, { lower: true });
+    }
 });
 
 const Category = mongoose.model('Category', categorySchema);

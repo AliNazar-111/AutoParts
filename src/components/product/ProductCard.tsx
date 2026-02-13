@@ -7,17 +7,26 @@ import { Link } from "react-router";
 
 interface ProductCardProps {
     product: {
-        id: string;
+        _id?: string;
+        id?: string;
         name: string;
         price: number;
-        image: string;
-        compatibility: string[];
+        imageUrl?: string;
+        image?: string;
+        compatibility: any[];
         stockStatus: string;
-        has3D: boolean;
+        model3D?: any;
     };
 }
 
 export const ProductCard = memo(({ product }: ProductCardProps) => {
+    const displayImage = product.imageUrl || product.image;
+    const has3D = !!product.model3D;
+    const primaryCompat = product.compatibility?.[0];
+    const compatLabel = typeof primaryCompat === 'string'
+        ? primaryCompat
+        : primaryCompat?.make || 'Industrial';
+
     return (
         <motion.div
             layout
@@ -30,7 +39,7 @@ export const ProductCard = memo(({ product }: ProductCardProps) => {
                 {/* Product Staging Area */}
                 <div className="relative aspect-square overflow-hidden bg-graphite-900/50 flex items-center justify-center p-4">
                     <img
-                        src={product.image}
+                        src={displayImage}
                         alt={product.name}
                         className="w-full h-full object-cover rounded-2xl transition-transform duration-700 group-hover:scale-105"
                     />
@@ -39,7 +48,7 @@ export const ProductCard = memo(({ product }: ProductCardProps) => {
                     <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-graphite-950/60 to-transparent" />
 
                     {/* 3D Indicator Toggle */}
-                    {product.has3D && (
+                    {has3D && (
                         <div className="absolute bottom-4 right-4">
                             <motion.div
                                 className="bg-primary/20 backdrop-blur-xl border border-primary/30 text-primary text-xs font-black tracking-widest px-3 py-1.5 rounded-lg flex items-center gap-2 shadow-2xl shadow-primary/20"
@@ -66,7 +75,7 @@ export const ProductCard = memo(({ product }: ProductCardProps) => {
                 {/* Product Metadata */}
                 <div className="p-6 flex flex-col flex-grow">
                     <div className="text-zinc-500 text-xs mb-2 uppercase tracking-[0.2em] font-black">
-                        {product.compatibility[0]} Systems
+                        {compatLabel} Systems
                     </div>
                     <h3 className="text-white font-bold mb-4 group-hover:text-primary transition-colors line-clamp-2 min-h-[3rem] text-lg leading-tight uppercase tracking-tight font-heading">
                         {product.name}
@@ -79,7 +88,7 @@ export const ProductCard = memo(({ product }: ProductCardProps) => {
                                 ${product.price.toLocaleString()}
                             </span>
                         </div>
-                        <Link to={`/products/${product.id}`}>
+                        <Link to={`/products/${product._id || product.id}`}>
                             <Button size="icon" variant="industrial" className="group/btn rounded-2xl">
                                 <ChevronRight className="w-5 h-5 group-hover/btn:translate-x-1 transition-transform" />
                             </Button>

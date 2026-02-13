@@ -181,7 +181,7 @@ export default function Products() {
                 >
                   <AnimatePresence mode="popLayout">
                     {products.map((product: Product) => (
-                      <ProductCard key={product.id} product={product} />
+                      <ProductCard key={product._id || product.id} product={product as any} />
                     ))}
                   </AnimatePresence>
                 </motion.div>
