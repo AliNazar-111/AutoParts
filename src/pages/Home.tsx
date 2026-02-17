@@ -1,11 +1,13 @@
+import { useState, useEffect } from "react";
 import { Link } from "react-router";
-import { motion } from "motion/react";
-import { ArrowRight, Settings, Box, Disc, Wrench, Zap, BadgeCheck, Headset, RotateCcw, ShieldCheck, Cpu } from "lucide-react";
-import { mockProducts, categories } from "../utils/constants";
+import { motion, AnimatePresence } from "motion/react";
+import { ArrowRight, Settings, Box, Disc, Wrench, Zap, BadgeCheck, Headset, RotateCcw, ShieldCheck, Cpu, LayoutDashboard, Package, Boxes, Loader2 } from "lucide-react";
 import { Button } from "../components/ui/Button";
 import { ProductCard } from "../components/product/ProductCard";
 import { CategoryCard } from "../components/product/CategoryCard";
 import { WhyChooseUsCard } from "../components/product/WhyChooseUsCard";
+import { useCategories } from "../hooks/useCategories";
+import { useProducts } from "../hooks/useProducts";
 
 // Industrial Grid Background
 function IndustrialGrid() {
@@ -29,7 +31,14 @@ function ScanningBeam() {
 }
 
 export default function Home() {
-  const featuredProducts = mockProducts.slice(0, 3);
+  const { categories, loading: categoriesLoading } = useCategories();
+  const { products, loading: productsLoading, fetchProducts } = useProducts();
+
+  useEffect(() => {
+    fetchProducts({ limit: 3 });
+  }, [fetchProducts]);
+
+  const featuredProducts = products;
 
   const features = [
     { icon: BadgeCheck, title: "OEM Certified", description: "100% authentic industrial-grade components from primary manufacturers.", color: "red" },
@@ -38,11 +47,17 @@ export default function Home() {
   ];
 
   const categoryIcons: Record<string, any> = {
-    "Engine": Settings,
-    "Brakes": Disc,
-    "Suspension": Wrench,
-    "Electrical": Zap,
+    "Engine Systems": Settings,
+    "Brake Systems": Disc,
+    "Suspension Stage": Wrench,
+    "Digital & Power": Zap,
+    "Transmission Stage": Cpu,
+    "Exterior & Trim": Box,
+    "Interior Systems": LayoutDashboard,
+    "Universal Accessories": Package,
   };
+
+  const getCategoryIcon = (name: string) => categoryIcons[name] || Boxes;
 
   return (
     <div className="min-h-screen bg-graphite-950 text-foreground">
@@ -131,36 +146,44 @@ export default function Home() {
       </section>
 
       {/* Featured Taxonomy Segment */}
-      <section className="py-32 relative">
+      {/* Categories Section */}
+      <section className="py-24 border-t border-white/5 relative bg-graphite-1000">
         <div className="container mx-auto px-6">
-          <div className="flex flex-col md:flex-row md:items-end justify-between mb-20 gap-8">
-            <div className="max-w-xl">
-              <h2 className="text-4xl md:text-5xl font-black text-white mb-6 uppercase tracking-tighter font-heading">
-                Operational <span className="text-primary">Segments</span>
+          <div className="flex items-end justify-between mb-16 px-4">
+            <div>
+              <div className="flex items-center gap-4 text-primary mb-6">
+                <span className="h-px w-12 bg-primary/30" />
+                <span className="text-xs font-black tracking-[0.4em] uppercase">Taxonomy</span>
+              </div>
+              <h2 className="text-5xl font-black text-white tracking-tighter leading-none mb-4 font-heading">
+                OPERATIONAL <br /> <span className="text-primary italic">SEGMENTS</span>
               </h2>
-              <p className="text-zinc-500 font-medium text-lg leading-relaxed">
-                Navigate our precision-categorized inventory optimized for enterprise procurement workflows.
-              </p>
             </div>
-            <Link to="/products" className="hidden md:block">
-              <Button variant="link" className="group">
-                View Full Taxonomy <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
-              </Button>
-            </Link>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            {categories.map((category, idx) => (
-              <CategoryCard
-                key={category.id}
-                category={{
-                  ...category,
-                  icon: categoryIcons[category.name] || Box,
-                  count: Math.floor(Math.random() * 500) + 1200
-                }}
-                index={idx}
-              />
-            ))}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <AnimatePresence>
+              {categoriesLoading ? (
+                Array.from({ length: 8 }).map((_, idx) => (
+                  <div key={`skeleton-${idx}`} className="h-[300px] rounded-2xl bg-white/5 animate-pulse border border-white/5" />
+                ))
+              ) : (
+                categories.filter(c => !c.parent).map((category, idx) => (
+                  <CategoryCard
+                    key={category._id || category.id}
+                    category={{
+                      id: category.slug || category._id,
+                      name: category.name,
+                      icon: getCategoryIcon(category.name),
+                      image: category.image || "https://images.unsplash.com/photo-1486006396193-471a2abc93e2?q=80&w=1080",
+                      count: Math.floor(Math.random() * 500) + 1200, // Still random for now as per design
+                      color: idx % 2 === 0 ? "primary" : "secondary"
+                    }}
+                    index={idx}
+                  />
+                ))
+              )}
+            </AnimatePresence>
           </div>
         </div>
       </section>
@@ -194,9 +217,25 @@ export default function Home() {
             </Link>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-            {featuredProducts.map((product) => (
-              <ProductCard key={product._id || product.id} product={product as any} />
-            ))}
+            <AnimatePresence mode="wait">
+              {productsLoading ? (
+                Array.from({ length: 3 }).map((_, idx) => (
+                  <motion.div
+                    key={`skeleton-prod-${idx}`}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    className="aspect-square rounded-3xl bg-white/5 border border-white/5 animate-pulse relative overflow-hidden"
+                  >
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full animate-[shimmer_2s_infinite]" />
+                  </motion.div>
+                ))
+              ) : (
+                featuredProducts.map((product) => (
+                  <ProductCard key={product._id || product.id} product={product as any} />
+                ))
+              )}
+            </AnimatePresence>
           </div>
         </div>
       </section>

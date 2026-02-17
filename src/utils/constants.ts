@@ -24,6 +24,10 @@ export interface Product {
     label: string;
     value: string;
   }[];
+  specification?: {
+    label: string;
+    value: string;
+  }[];
 }
 
 export interface Category {
@@ -165,32 +169,32 @@ export const mockProducts: Product[] = [
 
 export const categories: Category[] = [
   {
-    id: "engine",
-    name: "Engine",
-    icon: "Engine",
-    description: "Performance & reliability",
-    image: "https://images.unsplash.com/photo-1762139258224-236877b2c571?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjYXIlMjBlbmdpbmUlMjBwYXJ0c3xlbnwxfHx8fDE3NjkwMzQ1ODJ8MA&ixlib=rb-4.1.0&q=80&w=1080",
+    id: "engine-systems",
+    name: "Engine Systems",
+    icon: "Settings",
+    description: "Performance & core reliability",
+    image: "https://images.unsplash.com/photo-1762139258224-236877b2c571?q=80&w=1080",
     color: "red",
   },
   {
-    id: "brakes",
-    name: "Brakes",
+    id: "brake-systems",
+    name: "Brake Systems",
     icon: "Disc",
-    description: "Safety & control",
-    image: "https://images.unsplash.com/photo-1750019487267-47568f388dfa?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxicmFrZSUyMHBhZHMlMjBhdXRvbW90aXZlfGVufDF8fHx8MTc2OTA3ODMxNXww&ixlib=rb-4.1.0&q=80&w=1080",
+    description: "Safety-critical components",
+    image: "https://images.unsplash.com/photo-1750019487267-47568f388dfa?q=80&w=1080",
     color: "blue",
   },
   {
-    id: "suspension",
-    name: "Suspension",
+    id: "suspension-stage",
+    name: "Suspension Stage",
     icon: "Wrench",
-    description: "Comfort & handling",
-    image: "https://images.unsplash.com/photo-1760836395763-25ea44ae8145?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjYXIlMjBzdXNwZW5zaW9uJTIwcGFydHN8ZW58MXx8fHwxNzY5MDE0NzE1fDA&ixlib=rb-4.1.0&q=80&w=1080",
+    description: "Handling & orchestration",
+    image: "https://images.unsplash.com/photo-1760836395763-25ea44ae8145?q=80&w=1080",
     color: "green",
   },
   {
-    id: "electrical",
-    name: "Electrical",
+    id: "digital-power",
+    name: "Digital & Power",
     icon: "Zap",
     description: "Power & connectivity",
     image: "https://images.unsplash.com/photo-1561338800-3aca39ac913e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjYXIlMjBlbGVjdHJpY2FsJTIwcGFydHN8ZW58MXx8fHwxNzY5MDc4MzE3fDA&ixlib=rb-4.1.0&q=80&w=1080",

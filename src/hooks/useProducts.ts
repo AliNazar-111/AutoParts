@@ -5,6 +5,8 @@ import { Product } from '@/utils/constants';
 interface UseProductsResult {
     products: Product[];
     total: number;
+    page: number;
+    totalPages: number;
     loading: boolean;
     error: string | null;
     fetchProducts: (params?: any) => Promise<void>;
@@ -16,6 +18,8 @@ const requestCache = new Map<string, Promise<any>>();
 export function useProducts(): UseProductsResult {
     const [products, setProducts] = useState<Product[]>([]);
     const [total, setTotal] = useState(0);
+    const [page, setPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const lastRequestKey = useRef<string | null>(null);
@@ -42,6 +46,8 @@ export function useProducts(): UseProductsResult {
             const response = await requestPromise;
             setProducts(response.data.products);
             setTotal(response.total);
+            setPage(response.page || 1);
+            setTotalPages(response.pages || 1);
             lastRequestKey.current = cacheKey;
         } catch (err: any) {
             setError(err.message || 'Failed to fetch products');
@@ -52,5 +58,5 @@ export function useProducts(): UseProductsResult {
         }
     }, []);
 
-    return { products, total, loading, error, fetchProducts };
+    return { products, total, page, totalPages, loading, error, fetchProducts };
 }

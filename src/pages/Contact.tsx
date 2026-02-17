@@ -1,13 +1,15 @@
 import { useState } from "react";
+import { useInquiry } from "../hooks/useInquiry";
 import { motion, AnimatePresence } from "motion/react";
 import {
   Phone,
   Mail,
   MapPin,
-  MessageCircle,
   Clock,
+  MessageCircle,
   Send,
   CheckCircle,
+  AlertCircle,
   Car,
   MessageSquare,
   ShieldCheck,
@@ -16,8 +18,10 @@ import {
 } from "lucide-react";
 import { Input } from "../components/ui/Input";
 import { Button } from "../components/ui/Button";
+import { Textarea } from "../components/ui/Textarea";
 
 export default function Contact() {
+  const { submitInquiry, loading, error, success } = useInquiry();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -28,13 +32,25 @@ export default function Contact() {
     message: "",
   });
 
-  const [submitted, setSubmitted] = useState(false);
-
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitted(true);
-    setTimeout(() => {
-      setSubmitted(false);
+
+    await submitInquiry({
+      product: "general-inquiry", // Fallback for contact page
+      vehicleInfo: {
+        make: formData.vehicleMake,
+        model: formData.vehicleModel,
+        year: parseInt(formData.vehicleYear) || 0,
+      },
+      contactInfo: {
+        phone: formData.phone,
+        email: formData.email,
+      },
+      type: 'general',
+      message: `Inquiry from ${formData.name}: ${formData.message}`
+    });
+
+    if (!error) {
       setFormData({
         name: "",
         email: "",
@@ -44,7 +60,7 @@ export default function Contact() {
         vehicleYear: "",
         message: "",
       });
-    }, 3000);
+    }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -68,7 +84,7 @@ export default function Contact() {
           <motion.h1
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
-            className="text-6xl md:text-8xl font-black text-white mb-8 uppercase tracking-tighter font-heading leading-none"
+            className="text-5xl md:text-7xl font-black text-white mb-6 uppercase tracking-tighter font-heading leading-none"
           >
             Direct <span className="text-primary">Transmission</span>
           </motion.h1>
@@ -164,7 +180,7 @@ export default function Contact() {
                 </div>
 
                 <AnimatePresence>
-                  {submitted && (
+                  {success && (
                     <motion.div
                       initial={{ opacity: 0, y: -20 }}
                       animate={{ opacity: 1, y: 0 }}
@@ -182,6 +198,24 @@ export default function Contact() {
                       </div>
                     </motion.div>
                   )}
+
+                  {error && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="mb-12"
+                    >
+                      <div className="bg-red-500/10 border border-red-500/20 rounded-3xl p-8 flex items-center gap-6 shadow-2xl">
+                        <div className="w-14 h-14 rounded-2xl bg-red-500/20 flex items-center justify-center">
+                          <AlertCircle className="w-6 h-6 text-red-500" />
+                        </div>
+                        <div>
+                          <div className="font-black text-white text-xl uppercase tracking-tighter">Transmission Error</div>
+                          <p className="text-zinc-500 text-sm font-medium">{error}</p>
+                        </div>
+                      </div>
+                    </motion.div>
+                  )}
                 </AnimatePresence>
 
                 <form onSubmit={handleSubmit} className="space-y-10">
@@ -194,7 +228,7 @@ export default function Contact() {
                         onChange={handleChange}
                         placeholder="AUTHENTICATED NAME"
                         required
-                        className="h-16 bg-white/2 border-white/5 rounded-2xl font-bold transition-all focus-visible:bg-white/5"
+                        className="h-12 bg-white/2 border-white/5 rounded-2xl font-bold transition-all focus-visible:bg-white/5"
                       />
                     </div>
                     <div className="space-y-4">
@@ -206,7 +240,7 @@ export default function Contact() {
                         onChange={handleChange}
                         placeholder="COMMUNICATION@NODE.IO"
                         required
-                        className="h-16 bg-white/2 border-white/5 rounded-2xl font-bold transition-all focus-visible:bg-white/5"
+                        className="h-12 bg-white/2 border-white/5 rounded-2xl font-bold transition-all focus-visible:bg-white/5"
                       />
                     </div>
                   </div>
@@ -246,21 +280,21 @@ export default function Contact() {
                       <label className="text-[10px] font-black text-zinc-600 uppercase tracking-[0.3em] ml-1">Inquiry Parameters</label>
                       <span className="text-[9px] font-bold uppercase tracking-widest text-zinc-700">Detailed logs preferred</span>
                     </div>
-                    <textarea
+                    <Textarea
                       name="message"
                       value={formData.message}
                       onChange={handleChange}
                       placeholder="Specify technical requirements, serial identifiers or compatibility queries..."
                       required
                       rows={5}
-                      className="w-full bg-white/2 border border-white/5 rounded-[2rem] p-8 text-white placeholder-zinc-800 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/20 transition-all resize-none font-medium"
+                      className="w-full bg-white/2 border-white/5 rounded-[2rem] p-8 text-white placeholder-zinc-800 focus-visible:bg-white/5"
                     />
                   </div>
 
                   <div className="pt-6">
-                    <Button type="submit" variant="default" className="w-full h-20 text-xs font-black uppercase tracking-[0.4em] rounded-[1.5rem] shadow-premium group">
+                    <Button type="submit" disabled={loading} variant="default" className="w-full h-16 text-xs font-black uppercase tracking-[0.4em] rounded-2xl shadow-premium group">
                       <Zap className="w-4 h-4 mr-4 text-white group-hover:animate-pulse" />
-                      Initialize Transmission
+                      {loading ? "Transmitting..." : "Initialize Transmission"}
                     </Button>
                   </div>
                 </form>

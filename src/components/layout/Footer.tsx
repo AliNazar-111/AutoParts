@@ -73,6 +73,7 @@ export default function Footer() {
                   <Link
                     to={link.path}
                     className="text-sm text-zinc-500 hover:text-white transition-colors flex items-center gap-3 group font-medium py-1"
+                    style={{ marginLeft: '-1rem' }}
                   >
                     <span className="w-1.5 h-1.5 rounded-full bg-primary/0 group-hover:bg-primary transition-all duration-300" />
                     {link.label}
@@ -91,6 +92,7 @@ export default function Footer() {
                   <Link
                     to={link.path}
                     className="text-sm text-zinc-500 hover:text-white transition-colors flex items-center gap-3 group font-medium py-1"
+                    style={{ marginLeft: '-1rem' }}
                   >
                     <span className="w-1.5 h-1.5 rounded-full bg-primary/0 group-hover:bg-primary transition-all duration-300" />
                     {link.label}
@@ -110,7 +112,9 @@ export default function Footer() {
                 { icon: MapPin, text: "Industrial Zone A, Detroit MI" },
               ].map((item, idx) => (
                 <li key={idx} className="flex items-start gap-4 group">
-                  <div className="w-10 h-10 rounded-xl bg-white/5 border border-white/5 flex items-center justify-center flex-shrink-0 transition-all group-hover:border-primary/20">
+                  <div className="w-10 h-10 rounded-xl bg-white/5 border border-white/5 flex items-center justify-center flex-shrink-0 transition-all group-hover:border-primary/20"
+                    style={{ marginLeft: '-1rem' }}
+                  >
                     <item.icon className="w-4 h-4 text-zinc-400 group-hover:text-primary transition-colors" />
                   </div>
                   <span className="text-sm text-zinc-500 group-hover:text-zinc-300 transition-colors font-medium mt-2 leading-tight">{item.text}</span>

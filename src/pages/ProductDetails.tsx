@@ -236,7 +236,7 @@ export default function ProductDetails() {
                       exit={{ opacity: 0, x: 10 }}
                       className="grid grid-cols-1 md:grid-cols-2 gap-x-16 gap-y-6"
                     >
-                      {product.specifications.map((spec, idx) => (
+                      {(product.specification || product.specifications || []).map((spec: any, idx: number) => (
                         <div key={idx} className="flex flex-col gap-1 pb-4 border-b border-white/5 group">
                           <span className="text-zinc-600 text-[10px] font-black uppercase tracking-widest">{spec.label}</span>
                           <span className="text-white font-black text-sm uppercase group-hover:text-primary transition-colors">{spec.value}</span>
@@ -251,7 +251,7 @@ export default function ProductDetails() {
                       exit={{ opacity: 0, x: -10 }}
                       className="grid grid-cols-1 md:grid-cols-2 gap-6"
                     >
-                      {product.compatibility.map((vehicle: any, idx: number) => (
+                      {(product.compatibility || []).map((vehicle: any, idx: number) => (
                         <div key={idx} className="flex items-center gap-4 p-5 bg-white/2 rounded-[1.25rem] border border-white/5 hover:border-green-500/20 transition-all group">
                           <div className="w-10 h-10 bg-green-500/10 rounded-xl flex items-center justify-center border border-green-500/10">
                             <CheckCircle className="w-5 h-5 text-green-500" />

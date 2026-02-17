@@ -2,8 +2,10 @@ import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router";
 import { motion, AnimatePresence } from "motion/react";
 import { Settings, Phone, Menu, X, ChevronRight } from "lucide-react";
+import { useInquiryContext } from "@/context/InquiryContext";
 
 export default function Header() {
+  const { openInquiry } = useInquiryContext();
   const location = useLocation();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -88,13 +90,13 @@ export default function Header() {
 
             <div className="flex items-center gap-2 md:gap-4">
               {/* Contact Button - Desktop */}
-              <Link
-                to="/contact"
+              <button
+                onClick={() => openInquiry('general')}
                 className="hidden md:flex btn-ember"
               >
                 <Phone className="w-4 h-4" />
                 GET A QUOTE
-              </Link>
+              </button>
 
               {/* Mobile Menu Toggle */}
               <button
@@ -166,13 +168,16 @@ export default function Header() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.4 }}
                 >
-                  <Link
-                    to="/contact"
+                  <button
+                    onClick={() => {
+                      setIsMobileMenuOpen(false);
+                      openInquiry('general');
+                    }}
                     className="btn-ember w-full h-16 text-[10px] font-black tracking-[0.2em]"
                   >
                     <Phone className="w-5 h-5" />
                     REQUEST QUOTE
-                  </Link>
+                  </button>
                 </motion.div>
               </div>
             </motion.div>

@@ -1,9 +1,10 @@
 import { memo } from "react";
+import { Link } from "react-router";
 import { motion } from "motion/react";
 import { Badge } from "../ui/Badge";
 import { Button } from "../ui/Button";
 import { Box, ChevronRight } from "lucide-react";
-import { Link } from "react-router";
+import { convertUsdToPkr, displayPriceAsPkr } from "../../utils/currency";
 
 interface ProductCardProps {
     product: {
@@ -84,8 +85,8 @@ export const ProductCard = memo(({ product }: ProductCardProps) => {
                     <div className="mt-auto pt-4 border-t border-white/5 flex items-center justify-between">
                         <div className="flex flex-col">
                             <span className="text-xs text-zinc-500 font-bold uppercase tracking-widest">Base Value</span>
-                            <span className="text-2xl font-black text-white font-heading">
-                                ${product.price.toLocaleString()}
+                            <span className="text-xl font-black text-white font-heading">
+                                {displayPriceAsPkr(product.price)}
                             </span>
                         </div>
                         <Link to={`/products/${product._id || product.id}`}>

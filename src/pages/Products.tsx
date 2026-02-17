@@ -2,10 +2,11 @@ import { useState, useEffect, useCallback } from "react";
 import { useSearchParams } from "react-router";
 import { motion, AnimatePresence } from "motion/react";
 import { Search, LayoutGrid, Grid3X3, Box, Loader2, AlertCircle, Database, FilterX, Filter, X } from "lucide-react";
-import { categories, Product, makes } from "@/utils/constants";
+import { categories as staticCategories, Product, makes } from "@/utils/constants";
 import { ProductCard } from "@/components/product/ProductCard";
 import { ProductFilters } from "@/components/product/ProductFilters";
 import { useProducts } from "@/hooks/useProducts";
+import { useCategories } from "@/hooks/useCategories";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 
@@ -16,29 +17,38 @@ export default function Products() {
   const [selectedCategory, setSelectedCategory] = useState(categoryParam || "all");
   const [selectedMake, setSelectedMake] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
   const [viewMode, setViewMode] = useState<"grid" | "compact">("grid");
   const [showMobileFilters, setShowMobileFilters] = useState(false);
 
-  const { products, total, loading, error, fetchProducts } = useProducts();
+  const { products, total, page, totalPages, loading, error, fetchProducts } = useProducts();
+  const { categories, loading: categoriesLoading } = useCategories();
 
   const handleFetch = useCallback(() => {
     fetchProducts({
       category: selectedCategory === "all" ? undefined : selectedCategory,
       make: selectedMake === "all" ? undefined : selectedMake,
       search: searchQuery || undefined,
+      page: currentPage,
       limit: 12
     });
-  }, [selectedCategory, selectedMake, searchQuery, fetchProducts]);
+  }, [selectedCategory, selectedMake, searchQuery, currentPage, fetchProducts]);
 
   useEffect(() => {
     const timer = setTimeout(handleFetch, 300);
     return () => clearTimeout(timer);
   }, [handleFetch]);
 
+  // Reset to page 1 when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [selectedCategory, selectedMake, searchQuery]);
+
   const clearFilters = () => {
     setSelectedCategory("all");
     setSelectedMake("all");
     setSearchQuery("");
+    setCurrentPage(1);
   };
 
   return (
@@ -102,7 +112,11 @@ export default function Products() {
           <aside className="hidden lg:block lg:col-span-3 space-y-8 h-fit sticky top-32">
             <div className="glass-stage rounded-3xl p-2 border border-white/5">
               <ProductFilters
-                categories={categories.map(c => ({ ...c, icon: Box }))}
+                categories={categories.map(c => ({
+                  id: c.slug || c._id,
+                  name: c.name,
+                  icon: Box
+                }))}
                 makes={makes}
                 selectedCategory={selectedCategory}
                 selectedMake={selectedMake}
@@ -195,6 +209,44 @@ export default function Products() {
                   <Button variant="outline" onClick={clearFilters} className="h-14 px-10 w-full sm:w-auto">Reset Filter Matrix</Button>
                 </div>
               )}
+
+              {/* Pagination Orchestration */}
+              {!loading && products.length > 0 && totalPages > 1 && (
+                <div className="mt-20 flex flex-col sm:flex-row items-center justify-between gap-8 pt-10 border-t border-white/5">
+                  <div className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-600">
+                    Stage {page} <span className="text-zinc-800 mx-2">/</span> {totalPages}
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      disabled={page === 1}
+                      onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                      className="px-6 h-12 rounded-xl transition-all hover:border-primary/50 disabled:opacity-20"
+                    >
+                      Previous
+                    </Button>
+                    <div className="flex items-center gap-2 px-2">
+                      {Array.from({ length: totalPages }).map((_, i) => (
+                        <button
+                          key={i}
+                          onClick={() => setCurrentPage(i + 1)}
+                          className={`w-2 h-2 rounded-full transition-all duration-500 ${page === i + 1 ? "bg-primary w-6" : "bg-white/10 hover:bg-white/20"}`}
+                        />
+                      ))}
+                    </div>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      disabled={page === totalPages}
+                      onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                      className="px-6 h-12 rounded-xl transition-all hover:border-primary/50 disabled:opacity-20"
+                    >
+                      Next
+                    </Button>
+                  </div>
+                </div>
+              )}
             </div>
           </main>
         </div>
@@ -234,7 +286,11 @@ export default function Products() {
               </div>
 
               <ProductFilters
-                categories={categories.map(c => ({ ...c, icon: Box }))}
+                categories={categories.map(c => ({
+                  id: c.slug || c._id,
+                  name: c.name,
+                  icon: Box
+                }))}
                 makes={makes}
                 selectedCategory={selectedCategory}
                 selectedMake={selectedMake}
