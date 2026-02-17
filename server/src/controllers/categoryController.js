@@ -3,9 +3,23 @@ const Category = require('../models/categoryModel');
 // GET all categories (Public)
 exports.getAllCategories = async (req, res) => {
     try {
-        const categories = await Category.find({ active: true })
-            .populate('subcategories')
-            .lean();
+        const categories = await Category.aggregate([
+            { $match: { active: true } },
+            {
+                $lookup: {
+                    from: 'products',
+                    localField: '_id',
+                    foreignField: 'category',
+                    as: 'products'
+                }
+            },
+            {
+                $addFields: {
+                    productCount: { $size: '$products' }
+                }
+            },
+            { $project: { products: 0 } }
+        ]);
 
         res.status(200).json({
             status: 'success',
@@ -57,9 +71,23 @@ exports.getCategory = async (req, res) => {
 // GET parent categories only (Public)
 exports.getParentCategories = async (req, res) => {
     try {
-        const categories = await Category.find({ parent: null, active: true })
-            .populate('subcategories')
-            .lean();
+        const categories = await Category.aggregate([
+            { $match: { parent: null, active: true } },
+            {
+                $lookup: {
+                    from: 'products',
+                    localField: '_id',
+                    foreignField: 'category',
+                    as: 'products'
+                }
+            },
+            {
+                $addFields: {
+                    productCount: { $size: '$products' }
+                }
+            },
+            { $project: { products: 0 } }
+        ]);
 
         res.status(200).json({
             status: 'success',

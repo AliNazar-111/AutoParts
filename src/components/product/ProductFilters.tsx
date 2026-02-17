@@ -54,17 +54,17 @@ export function ProductFilters({
                         <button
                             key={cat.id}
                             onClick={() => onCategoryChange(cat.id)}
-                            className={`w-full flex items-center justify-between p-4 rounded-2xl transition-all duration-300 group ${selectedCategory === cat.id
+                            className={`w-full flex items-center justify-between p-4 rounded-2xl transition-all duration-300 group text-left ${selectedCategory === cat.id
                                 ? "bg-primary/20 text-white border border-primary/30 shadow-[0_0_20px_rgba(227,30,36,0.1)]"
                                 : "text-zinc-500 hover:bg-white/5 border border-transparent"
                                 }`}
                         >
-                            <div className="flex items-center gap-4">
-                                <cat.icon className={`w-4 h-4 transition-colors ${selectedCategory === cat.id ? "text-primary" : "text-zinc-600 group-hover:text-zinc-400"}`} />
-                                <span className="text-xs font-bold uppercase tracking-widest">{cat.name}</span>
+                            <div className="flex items-center gap-4 flex-1 pr-2">
+                                <cat.icon className={`w-4 h-4 shrink-0 transition-colors ${selectedCategory === cat.id ? "text-primary" : "text-zinc-600 group-hover:text-zinc-400"}`} />
+                                <span className="text-[11px] font-bold uppercase tracking-wider leading-tight">{cat.name}</span>
                             </div>
                             {selectedCategory === cat.id && (
-                                <motion.div layoutId="active-cat-marker">
+                                <motion.div layoutId="active-cat-marker" className="shrink-0">
                                     <Check className="w-4 h-4 text-primary" />
                                 </motion.div>
                             )}

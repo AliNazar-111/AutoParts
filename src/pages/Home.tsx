@@ -32,7 +32,7 @@ function ScanningBeam() {
 
 export default function Home() {
   const { categories, loading: categoriesLoading } = useCategories();
-  const { products, loading: productsLoading, fetchProducts } = useProducts();
+  const { products, total, loading: productsLoading, fetchProducts } = useProducts();
 
   useEffect(() => {
     fetchProducts({ limit: 3 });
@@ -105,12 +105,14 @@ export default function Home() {
 
               <div className="grid grid-cols-3 gap-8 mt-16 pt-10 border-t border-white/5">
                 {[
-                  { label: "Inventory Items", value: "25k+" },
+                  { label: "Inventory Items", value: `${(total / 1000).toFixed(1)}k+` },
                   { label: "Accuracy Rate", value: "99.9%" },
                   { label: "Global Delivery", value: "24h" },
                 ].map((stat, i) => (
                   <div key={i}>
-                    <div className="text-2xl font-black text-white font-heading">{stat.value} </div>
+                    <div className="text-2xl font-black text-white font-heading">
+                      {productsLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : (stat.label === "Inventory Items" ? stat.value : stat.value)}
+                    </div>
                     <div className="text-[10px] text-zinc-600 font-bold uppercase tracking-widest mb-6">{stat.label}</div>
                   </div>
                 ))}
@@ -176,7 +178,7 @@ export default function Home() {
                       name: category.name,
                       icon: getCategoryIcon(category.name),
                       image: category.image || "https://images.unsplash.com/photo-1486006396193-471a2abc93e2?q=80&w=1080",
-                      count: Math.floor(Math.random() * 500) + 1200, // Still random for now as per design
+                      count: category.productCount || 0,
                       color: idx % 2 === 0 ? "primary" : "secondary"
                     }}
                     index={idx}

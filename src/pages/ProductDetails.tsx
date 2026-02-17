@@ -12,11 +12,13 @@ import {
   AlertCircle,
   ShieldCheck,
   Cpu,
-  Fingerprint
+  Fingerprint,
+  X,
+  Maximize2
 } from "lucide-react";
 import { Product } from "@/utils/constants";
 import { productService } from "@/services/productService";
-import { ModelViewer } from "@/components/product/ModelViewer";
+import { Product3DViewer } from "@/components/product/Product3DViewer";
 import { ProductInfo } from "@/components/product/ProductInfo";
 import { Button } from "@/components/ui/Button";
 
@@ -185,13 +187,43 @@ export default function ProductDetails() {
 
             <AnimatePresence>
               {show3D && (
-                <ModelViewer
-                  url={(product as any).model3D?.url || "https://sketchfab.com/models/..."}
-                  modelType={(product as any).model3D?.modelType || "sketchfab"}
-                  poster={product.image}
-                  onClose={() => setShow3D(false)}
-                  isModal={true}
-                />
+                <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/95 backdrop-blur-2xl p-4 md:p-12 lg:p-20">
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.9 }}
+                    className="relative w-full max-w-7xl aspect-video bg-graphite-950 rounded-[3rem] overflow-hidden industrial-border shadow-premium"
+                  >
+                    <div className="absolute top-8 left-8 right-8 flex items-center justify-between z-20">
+                      <div className="flex items-center gap-4">
+                        <div className="w-12 h-12 bg-primary/10 border border-primary/20 rounded-2xl flex items-center justify-center shadow-lg shadow-primary/10">
+                          <Maximize2 className="text-primary w-6 h-6 animate-pulse" />
+                        </div>
+                        <div>
+                          <h3 className="text-white font-black uppercase tracking-tighter text-xl font-heading leading-none">
+                            Precision 3D Inspection
+                          </h3>
+                          <p className="text-zinc-500 text-[10px] font-bold uppercase tracking-[0.2em] mt-2">
+                            High-Fidelity Interaction Enabled
+                          </p>
+                        </div>
+                      </div>
+                      <Button
+                        variant="industrial"
+                        size="icon"
+                        onClick={() => setShow3D(false)}
+                        className="rounded-2xl"
+                      >
+                        <X className="w-5 h-5" />
+                      </Button>
+                    </div>
+
+                    <Product3DViewer
+                      modelUrl={(product as any).model3D?.url || undefined}
+                      className="w-full h-full"
+                    />
+                  </motion.div>
+                </div>
               )}
             </AnimatePresence>
           </div>

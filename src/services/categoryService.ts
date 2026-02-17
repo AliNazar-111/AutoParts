@@ -10,6 +10,7 @@ export interface Category {
     parent?: string | Category;
     subcategories?: Category[];
     active: boolean;
+    productCount?: number;
 }
 
 export const categoryService = {

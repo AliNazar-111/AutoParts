@@ -96,6 +96,18 @@ export const ProductCard = memo(({ product }: ProductCardProps) => {
                         </Link>
                     </div>
                 </div>
+                <div className="absolute top-6 left-6 flex flex-col gap-2">
+                    {has3D && (
+                        <div className="group/3d px-3 py-1.5 rounded-lg bg-primary/20 backdrop-blur-md border border-primary/30 flex items-center gap-2 shadow-lg shadow-primary/10 transition-all hover:bg-primary hover:border-primary">
+                            <Box className="w-3 h-3 text-primary group-hover/3d:text-white transition-colors" />
+                            <span className="text-[9px] font-black text-white uppercase tracking-widest">3D Stage</span>
+                        </div>
+                    )}
+                    <Badge variant="outline" className="bg-zinc-950/80 backdrop-blur-md border border-white/5 pr-4">
+                        <div className="w-1.5 h-1.5 rounded-full bg-primary mr-2 animate-pulse shadow-[0_0_8px_var(--primary-glow)]" />
+                        {product.stockStatus || 'In Stock'}
+                    </Badge>
+                </div>
             </div>
         </motion.div>
     );
