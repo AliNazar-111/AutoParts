@@ -6,8 +6,6 @@ import {
   CheckCircle,
   Box,
   ZoomIn,
-  ChevronLeft,
-  ChevronRight,
   Loader2,
   AlertCircle,
   ShieldCheck,
@@ -28,7 +26,6 @@ export default function ProductDetails() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<"specs" | "compatibility">("specs");
-  const [selectedImage, setSelectedImage] = useState(0);
   const [show3D, setShow3D] = useState(false);
 
   useEffect(() => {
@@ -85,7 +82,6 @@ export default function ProductDetails() {
   }
 
   const displayImage = product.imageUrl || product.image;
-  const images = [displayImage, displayImage, displayImage];
 
   return (
     <div className="min-h-screen bg-graphite-950 pt-32 pb-24 overflow-hidden">
@@ -116,18 +112,14 @@ export default function ProductDetails() {
             <div className="relative group">
               <div className="glass-stage rounded-3xl md:rounded-[2.5rem] p-3 md:p-4 industrial-border overflow-hidden shadow-premium">
                 <div className="relative aspect-square md:aspect-[4/3] rounded-2xl md:rounded-[2rem] overflow-hidden bg-graphite-900/50 group/stage">
-                  <AnimatePresence mode="wait">
-                    <motion.img
-                      key={selectedImage}
-                      src={images[selectedImage]}
-                      alt={product.name}
-                      className="w-full h-full object-contain p-6 md:p-12 transition-transform duration-700"
-                      initial={{ opacity: 0, scale: 0.9 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      exit={{ opacity: 0, scale: 1.1 }}
-                      transition={{ type: "spring", stiffness: 100, damping: 20 }}
-                    />
-                  </AnimatePresence>
+                  <motion.img
+                    src={displayImage}
+                    alt={product.name}
+                    className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.5 }}
+                  />
 
                   {/* Digital Overlays */}
                   <div className="absolute inset-0 pointer-events-none border border-white/5 rounded-2xl md:rounded-[2rem]" />
@@ -137,26 +129,6 @@ export default function ProductDetails() {
                     <div className="w-1.5 h-1.5 rounded-full bg-white/10" />
                   </div>
 
-                  {images.length > 1 && (
-                    <div className="absolute inset-x-4 md:inset-x-6 top-1/2 -translate-y-1/2 flex justify-between opacity-0 group-hover/stage:opacity-100 transition-opacity">
-                      <Button
-                        variant="industrial"
-                        size="icon"
-                        onClick={() => setSelectedImage((prev) => (prev - 1 + images.length) % images.length)}
-                        className="w-10 h-10 md:w-12 md:h-12 rounded-full shadow-2xl"
-                      >
-                        <ChevronLeft className="w-5 h-5" />
-                      </Button>
-                      <Button
-                        variant="industrial"
-                        size="icon"
-                        onClick={() => setSelectedImage((prev) => (prev + 1) % images.length)}
-                        className="w-10 h-10 md:w-12 md:h-12 rounded-full shadow-2xl"
-                      >
-                        <ChevronRight className="w-5 h-5" />
-                      </Button>
-                    </div>
-                  )}
 
                   {!!product.model3D && (
                     <motion.button
@@ -173,17 +145,6 @@ export default function ProductDetails() {
               </div>
             </div>
 
-            <div className="flex gap-3 md:gap-4 overflow-x-auto pb-4 md:pb-0 no-scrollbar justify-start md:justify-center">
-              {images.map((img, idx) => (
-                <button
-                  key={idx}
-                  onClick={() => setSelectedImage(idx)}
-                  className={`relative w-20 h-20 md:w-24 md:h-24 rounded-xl md:rounded-2xl overflow-hidden border-2 transition-all p-2 md:p-3 bg-white/2 shrink-0 ${selectedImage === idx ? "border-primary shadow-lg shadow-primary/10 scale-105" : "border-white/5 opacity-50 hover:opacity-100"}`}
-                >
-                  <img src={img} className="w-full h-full object-contain" alt={`Thumbnail ${idx + 1}`} />
-                </button>
-              ))}
-            </div>
 
             <AnimatePresence>
               {show3D && (

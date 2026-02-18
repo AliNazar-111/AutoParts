@@ -49,18 +49,7 @@ export const ProductCard = memo(({ product }: ProductCardProps) => {
                     <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-graphite-950/60 to-transparent" />
 
                     {/* 3D Indicator Toggle */}
-                    {has3D && (
-                        <div className="absolute bottom-4 right-4">
-                            <motion.div
-                                className="bg-primary/20 backdrop-blur-xl border border-primary/30 text-primary text-xs font-black tracking-widest px-3 py-1.5 rounded-lg flex items-center gap-2 shadow-2xl shadow-primary/20"
-                                animate={{ opacity: [0.7, 1, 0.7] }}
-                                transition={{ duration: 3, repeat: Infinity }}
-                            >
-                                <Box className="w-3.5 h-3.5" />
-                                3D ENABLED
-                            </motion.div>
-                        </div>
-                    )}
+                    {has3D}
 
                     {/* Stock Intensity */}
                     <div className="absolute top-4 left-4">
